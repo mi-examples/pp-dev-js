@@ -40,7 +40,7 @@ jobs:
 
       - name: Install deps
         working-directory: ./packages/${{ steps.tag.outputs.pkgName }}
-        run: npm ci
+        run: npm install
         
       - name: Build package
         working-directory: ./packages/${{ steps.tag.outputs.pkgName }}
