@@ -4,7 +4,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
   env: {
-    node: true
+    node: true,
   },
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
@@ -15,17 +15,10 @@ module.exports = {
     'max-statements-per-line': ['error', { max: 3 }],
     'max-len': ['error', 120],
     'no-console': 'error',
-    'new-cap': [
-      'error',
-      { newIsCap: true, properties: false, capIsNew: false },
-    ],
+    'new-cap': ['error', { newIsCap: true, properties: false, capIsNew: false }],
     'newline-before-return': 'error',
     'key-spacing': ['error', { afterColon: true, mode: 'strict' }],
-    'lines-between-class-members': [
-      'error',
-      'always',
-      { exceptAfterSingleLine: true },
-    ],
+    'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
     'max-classes-per-file': ['error', { ignoreExpressions: true }],
   },
   root: true,
