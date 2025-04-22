@@ -5,3 +5,5 @@ node_modules
 *-pp-dev-*.*.*.tgz
 backups
 packages/create-pp-dev/template-*/package-lock.json
+.env
+!.env.example

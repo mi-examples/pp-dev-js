@@ -1,0 +1,38 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+#
+# Types:
+#   feat:     A new feature
+#   fix:      A bug fix
+#   docs:     Documentation only changes
+#   style:    Changes that do not affect the meaning of the code (white-space, formatting, etc)
+#   refactor: A code change that neither fixes a bug nor adds a feature
+#   perf:     A code change that improves performance
+#   test:     Adding missing tests or correcting existing tests
+#   chore:    Changes to the build process or auxiliary tools and libraries
+#
+# Scopes:
+#   build:    Changes that affect the build system or external dependencies
+#   ci:       Changes to CI configuration files and scripts
+#   docs:     Documentation related changes
+#   test:     Test related changes
+#   release:  Release related changes
+#
+# Examples:
+#   feat(api): add new endpoint for user registration
+#   fix(auth): handle invalid token error
+#   docs(readme): update installation instructions
+#   style: format code according to prettier
+#   refactor(utils): extract common functions
+#   perf(render): optimize image loading
+#   test(e2e): add login test suite
+#   chore(deps): update dependencies
+#
+# Breaking changes should be indicated by starting the footer with BREAKING CHANGE:
+# Example:
+#   feat(api): add new endpoint for user registration
+#
+#   BREAKING CHANGE: The user registration endpoint now requires additional fields 
