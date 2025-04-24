@@ -23,18 +23,19 @@ jobs:
 
       - name: Get changed packages
         id: set-packages
-        run: |
+        run: >
           if [[ $GITHUB_REF_NAME == "main" ]]; then
             # For main branch, we need to find changed packages
-            git fetch --prune --unshallow || true
+            git fetch --prune || true
             changed_files=$(git diff --name-only HEAD~1 HEAD)
-            packages=$(echo "$changed_files" | grep -o 'packages/[^/]*' | sort -u | cut -d'/' -f2)
+            packages=$(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u | jq -Rsc 'split("\\n") | map(select(length > 0))')
           else
             # For tags, determine package name based on tag format
             if [[ $GITHUB_REF_NAME =~ ^v ]]; then
-              packages="pp-dev"
+              packages='["pp-dev"]'
             else
-              packages=${GITHUB_REF_NAME%@*}
+              pkg_name=${GITHUB_REF_NAME%@*}
+              packages="[\\"$pkg_name\\"]"
             fi
           fi
           echo "packages=$packages" >> $GITHUB_OUTPUT
@@ -73,6 +74,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
+          NPM_TOKEN: ${{ secrets.npm_token }}
         run: |
           if [[ $GITHUB_REF_NAME == "main" ]]; then
             npm run release
