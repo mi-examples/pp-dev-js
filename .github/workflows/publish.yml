@@ -23,7 +23,7 @@ jobs:
 
       - name: Get changed packages
         id: set-packages
-        run: >
+        run: |
           if [[ $GITHUB_REF_NAME == "main" ]]; then
             # For main branch, we need to find changed packages
             git fetch --prune || true
