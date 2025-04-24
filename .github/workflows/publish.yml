@@ -24,18 +24,28 @@ jobs:
       - name: Get changed packages
         id: set-packages
         run: |
+          packages="" # Default to empty string
           if [[ $GITHUB_REF_NAME == "main" ]]; then
-            # For main branch, we need to find changed packages
+            # For main branch, find changed packages
             git fetch --prune || true
             changed_files=$(git diff --name-only HEAD~1 HEAD)
-            packages=$(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u | jq -Rsc 'split("\\n") | map(select(length > 0))')
+            # Extract unique package names
+            package_list=$(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u)
+            # If package_list is not empty, format as JSON array
+            if [[ -n "$package_list" ]]; then
+              packages=$(echo "$package_list" | jq -Rsc 'split("\\n") | map(select(length > 0))')
+            fi
           else
             # For tags, determine package name based on tag format
             if [[ $GITHUB_REF_NAME =~ ^v ]]; then
-              packages='["pp-dev"]'
+              packages='["pp-dev"]' # JSON array for v* tags
             else
+              # Extract package name from tags like package-name@version
               pkg_name=${GITHUB_REF_NAME%@*}
-              packages="[\"$pkg_name\"]"
+              # If pkg_name is not empty, format as JSON array
+              if [[ -n "$pkg_name" ]]; then
+                  packages="[\\"$pkg_name\\"]" # JSON array for specific package tag
+              fi
             fi
           fi
           echo "packages=$packages" >> $GITHUB_OUTPUT
