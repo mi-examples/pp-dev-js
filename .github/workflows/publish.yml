@@ -6,17 +6,50 @@ on:
       - main
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
-      - "create-pp-dev*" # Push events to matching create-pp-dev*, i.e. create-pp-dev@1.0.0
+      - "*@*" # Push events to matching any package tag, i.e. create-pp-dev@1.0.0
 
 jobs:
-  publish:
+  detect-packages:
     # prevents this action from running on forks
     if: github.repository == 'mi-examples/pp-dev-js'
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.set-packages.outputs.packages }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed packages
+        id: set-packages
+        run: |
+          if [[ $GITHUB_REF_NAME == "main" ]]; then
+            # For main branch, we need to find changed packages
+            git fetch --prune --unshallow || true
+            changed_files=$(git diff --name-only HEAD~1 HEAD)
+            packages=$(echo "$changed_files" | grep -o 'packages/[^/]*' | sort -u | cut -d'/' -f2)
+          else
+            # For tags, determine package name based on tag format
+            if [[ $GITHUB_REF_NAME =~ ^v ]]; then
+              packages="pp-dev"
+            else
+              packages=${GITHUB_REF_NAME%@*}
+            fi
+          fi
+          echo "packages=$packages" >> $GITHUB_OUTPUT
+
+  publish:
+    needs: detect-packages
+    if: ${{ needs.detect-packages.outputs.packages != '' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
     environment: Release
+    strategy:
+      matrix:
+        package: ${{ fromJSON(needs.detect-packages.outputs.packages) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -29,30 +62,14 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
 
-      - name: Get pkgName for publish
-        id: tag
+      - name: Install deps and build
+        working-directory: ./packages/${{ matrix.package }}
         run: |
-          # matching v2.0.0 / v2.0.0-beta.8 etc
-          if [[ $GITHUB_REF_NAME =~ ^v.+ ]]; then
-            pkgName="pp-dev"
-          else
-            # `%@*` truncates @ and version number from the right side.
-            # https://stackoverflow.com/questions/9532654/expression-after-last-specific-character
-            pkgName=${GITHUB_REF_NAME%@*}
-          fi
-          
-          echo "pkgName=$pkgName" >> $GITHUB_OUTPUT
-
-      - name: Install deps
-        working-directory: ./packages/${{ steps.tag.outputs.pkgName }}
-        run: npm install
-        
-      - name: Build package
-        working-directory: ./packages/${{ steps.tag.outputs.pkgName }}
-        run: npm run build
+          npm install
+          npm run build
 
       - name: Release and Publish
-        working-directory: ./packages/${{ steps.tag.outputs.pkgName }}
+        working-directory: ./packages/${{ matrix.package }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
