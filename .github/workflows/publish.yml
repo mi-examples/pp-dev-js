@@ -76,13 +76,6 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
 
-      - name: List files for debugging
-        run: |
-          pwd
-          ls -la
-          ls -la packages/
-        shell: bash
-
       - name: Install deps and build
         run: |
           npm install
