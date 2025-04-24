@@ -33,7 +33,7 @@ jobs:
             package_list=$(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u)
             # If package_list is not empty, format as JSON array
             if [[ -n "$package_list" ]]; then
-              packages=$(echo "$package_list" | jq -Rsc 'split("\\n") | map(select(length > 0))')
+              packages=$(echo "$package_list" | jq -Rsc 'split("\\n") | map(select(length > 0) | sub("^\\s+|\\s+$"; ""))' )
             fi
           else
             # For tags, determine package name based on tag format
@@ -75,6 +75,13 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
+
+      - name: List files for debugging
+        run: |
+          pwd
+          ls -la
+          ls -la packages/
+        shell: bash
 
       - name: Install deps and build
         run: |
