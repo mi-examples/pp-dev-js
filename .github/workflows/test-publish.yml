@@ -76,21 +76,21 @@ jobs:
           npm run build
 
       - name: Test Release Process (Dry Run)
-        if: ${{ github.event.inputs.dryRun }}
+        if: ${{ github.event.inputs.dryRun == true }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
           NPM_TOKEN: ${{ secrets.npm_token }}
-          DRY_RUN: "true"
         run: |
-          # Add --dry-run flag to semantic-release
+          echo "Running in dry-run mode"
           npx semantic-release --dry-run
 
-      - name: Test Release Process (Full)
-        if: ${{ !github.event.inputs.dryRun }}
+      - name: Run Full Release Process
+        if: ${{ github.event.inputs.dryRun == false }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
           NPM_TOKEN: ${{ secrets.npm_token }}
         run: |
+          echo "Running full release process"
           npm run release 
