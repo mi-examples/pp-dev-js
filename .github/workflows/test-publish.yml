@@ -74,9 +74,15 @@ jobs:
         run: |
           npm install
           npm run build
+          
+      - name: Debug Input Values
+        run: |
+          echo "Dry Run Input Value: '${{ github.event.inputs.dryRun }}'"
+          echo "Is True Check: ${{ github.event.inputs.dryRun == 'true' }}"
+          echo "Is False Check: ${{ github.event.inputs.dryRun == 'false' }}"
 
       - name: Test Release Process (Dry Run)
-        if: ${{ github.event.inputs.dryRun == true }}
+        if: ${{ github.event.inputs.dryRun != 'false' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
@@ -86,7 +92,7 @@ jobs:
           npx semantic-release --dry-run
 
       - name: Run Full Release Process
-        if: ${{ github.event.inputs.dryRun == false }}
+        if: ${{ github.event.inputs.dryRun == 'false' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
