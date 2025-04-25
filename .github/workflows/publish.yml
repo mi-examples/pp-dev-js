@@ -7,6 +7,13 @@ on:
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
       - "*@*" # Push events to matching any package tag, i.e. create-pp-dev@1.0.0
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to test (leave empty for all)'
+        required: false
+        type: string
+        default: ''
 
 jobs:
   detect-packages:
@@ -24,16 +31,25 @@ jobs:
       - name: Get changed packages
         id: set-packages
         run: |
-          packages="" # Default to empty string
-          if [[ $GITHUB_REF_NAME == "main" ]]; then
+          packages="[]" # Default to empty array
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.package }}" ]]; then
+            # For manual trigger with specified package
+            packages="[\"${{ github.event.inputs.package }}\"]"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # For manual trigger without specified package, use all packages
+            all_packages=($(ls -d packages/* | cut -d'/' -f2))
+            if [[ ${#all_packages[@]} -gt 0 ]]; then
+              packages=$(printf '"%s",' "${all_packages[@]}" | sed 's/,$//' | awk '{print "["$0"]"}')
+            fi
+          elif [[ $GITHUB_REF_NAME == "main" ]]; then
             # For main branch, find changed packages
             git fetch --prune || true
             changed_files=$(git diff --name-only HEAD~1 HEAD)
             # Extract unique package names
-            package_list=$(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u)
-            # If package_list is not empty, format as JSON array
-            if [[ -n "$package_list" ]]; then
-              packages=$(echo "$package_list" | jq -Rsc 'split("\\n") | map(select(length > 0) | sub("^\\s+|\\s+$"; ""))' )
+            package_dirs=($(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u))
+            # If we have changed packages, format as JSON array
+            if [[ ${#package_dirs[@]} -gt 0 ]]; then
+              packages=$(printf '"%s",' "${package_dirs[@]}" | sed 's/,$//' | awk '{print "["$0"]"}')
             fi
           else
             # For tags, determine package name based on tag format
@@ -44,21 +60,24 @@ jobs:
               pkg_name=${GITHUB_REF_NAME%@*}
               # If pkg_name is not empty, format as JSON array
               if [[ -n "$pkg_name" ]]; then
-                  packages="[\\"$pkg_name\\"]" # JSON array for specific package tag
+                  packages="[\"$pkg_name\"]" # JSON array for specific package tag
               fi
             fi
           fi
           echo "packages=$packages" >> $GITHUB_OUTPUT
+          echo "Generated packages output: $packages"
 
   publish:
     needs: detect-packages
-    if: ${{ needs.detect-packages.outputs.packages != '' }}
+    if: ${{ needs.detect-packages.outputs.packages != '[]' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
+      pull-requests: write
     environment: Release
     strategy:
+      fail-fast: false
       matrix:
         package: ${{ fromJSON(needs.detect-packages.outputs.packages) }}
     defaults:
