@@ -71,6 +71,9 @@ jobs:
             echo "Error: Invalid JSON generated for packages"
             exit 1
           fi
+          
+          # Always exit successfully - packages array is valid
+          echo "✅ Package detection completed successfully"
 
   # Publish pp-dev first (core package)
   publish-pp-dev:
