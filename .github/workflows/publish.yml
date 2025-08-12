@@ -44,7 +44,7 @@ jobs:
             if [[ -d "packages" ]]; then
               all_packages=($(ls -d packages/*/ 2>/dev/null | cut -d'/' -f2 | grep -v '^$'))
               if [[ ${#all_packages[@]} -gt 0 ]]; then
-                packages=$(printf '"%s",' "${all_packages[@]}" | sed 's/,$//' | awk '{print "["$0"]"}')
+                packages=$(printf '"%s",' "${all_packages[@]}" | sed 's/,$//' | sed 's/^/\[/; s/$/\]/')
               fi
             fi
           else
@@ -63,6 +63,8 @@ jobs:
           
           echo "packages=$packages" >> $GITHUB_OUTPUT
           echo "Generated packages output: $packages"
+          echo "Debug - packages output format: '$packages'"
+          echo "Debug - JSON validation: $(echo "$packages" | jq . 2>/dev/null || echo "INVALID JSON")"
           
           # Validate JSON output
           if ! echo "$packages" | jq . >/dev/null 2>&1; then

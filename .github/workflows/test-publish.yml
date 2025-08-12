@@ -37,11 +37,13 @@ jobs:
             # Use all packages
             all_packages=($(ls -d packages/* | cut -d'/' -f2))
             if [[ ${#all_packages[@]} -gt 0 ]]; then
-              packages=$(printf '"%s",' "${all_packages[@]}" | sed 's/,$//' | awk '{print "["$0"]"}')
+              packages=$(printf '"%s",' "${all_packages[@]}" | sed 's/,$//' | sed 's/^/\[/; s/$/\]/')
             fi
           fi
           echo "packages=$packages" >> $GITHUB_OUTPUT
           echo "Testing packages: $packages"
+          echo "Debug - packages output format: '$packages'"
+          echo "Debug - JSON validation: $(echo "$packages" | jq . 2>/dev/null || echo "INVALID JSON")"
 
   test-publish:
     needs: detect-packages
