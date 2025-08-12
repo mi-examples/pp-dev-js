@@ -1,0 +1,87 @@
+# Portal Page Dev - Cursor Rules
+
+## Commit Message Guidelines
+
+### Format: `<type>(<scope>): <subject>`
+- Use imperative mood ("add" not "added")
+- Don't capitalize first letter
+- No period at the end
+- Keep subject concise (50 chars or less)
+
+### Commit Types (choose one):
+- **`feat`** - A new feature (triggers MINOR version bump)
+- **`fix`** - A bug fix (triggers PATCH version bump)
+- **`docs`** - Documentation only changes (NO version bump)
+- **`style`** - Code style changes, formatting, etc (NO version bump)
+- **`refactor`** - Code refactoring, no functional changes (NO version bump)
+- **`perf`** - Performance improvements (NO version bump)
+- **`test`** - Adding or updating tests (NO version bump)
+- **`chore`** - Maintenance tasks, dependencies, etc (NO version bump)
+- **`ci`** - CI/CD configuration changes (NO version bump)
+- **`build`** - Build system or external dependency changes (NO version bump)
+
+### Scopes (optional, but recommended):
+- **`pp-dev`** - Changes to the pp-dev package
+- **`create-pp-dev`** - Changes to the create-pp-dev package
+- **`api`** - API-related changes
+- **`auth`** - Authentication/authorization changes
+- **`ui`** - User interface changes
+- **`build`** - Build system changes
+- **`ci`** - CI/CD changes
+- **`deps`** - Dependency updates
+- **`docs`** - Documentation changes
+- **`test`** - Testing changes
+- **`utils`** - Utility functions
+- **`config`** - Configuration changes
+
+### Examples:
+```bash
+feat(pp-dev): add new authentication middleware
+fix(api): resolve memory leak in data processing
+docs(readme): update installation instructions
+style: format code according to prettier rules
+refactor(utils): extract common validation functions
+perf(render): optimize image loading performance
+test(e2e): add comprehensive login test suite
+chore(deps): update all dependencies to latest versions
+ci(github): add semantic-release workflow
+build(rollup): optimize bundle size
+```
+
+### Breaking Changes:
+```bash
+feat(api): change response format structure
+
+BREAKING CHANGE: API now returns data in different structure.
+All existing clients must be updated to handle new format.
+
+Closes #123
+Fixes #456
+```
+
+### Body and Footer Guidelines:
+- **Body**: Explain WHAT and WHY, not HOW
+- **Footer**: Reference issues with "Closes #123" or "Fixes #456"
+- **Breaking Changes**: Start footer with "BREAKING CHANGE: <description>"
+
+### Important Notes:
+- Only `feat`, `fix`, and `BREAKING CHANGE` trigger version bumps
+- Use scopes to indicate which package/area is affected
+- Be descriptive but concise
+- Reference related issues when possible
+- Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification
+
+## General Development Guidelines
+
+### Code Quality:
+- Always aim for clean, maintainable architecture
+- Focus on areas of the code relevant to the task
+- Do not touch code unrelated to the task
+- Avoid making major changes to working patterns unless explicitly instructed
+- Think about what other methods and areas might be affected by changes
+
+### Semantic Release:
+- This project uses semantic-release for automated versioning
+- All releases go through Pull Requests (no direct pushes to main)
+- Commit messages determine version bumps automatically
+- Follow conventional commit format strictly for proper releases
