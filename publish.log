@@ -1,0 +1,777 @@
+2025-08-12T15:56:07.5409081Z Current runner version: '2.327.1'
+2025-08-12T15:56:07.5433415Z ##[group]Runner Image Provisioner
+2025-08-12T15:56:07.5434370Z Hosted Compute Agent
+2025-08-12T15:56:07.5434910Z Version: 20250711.363
+2025-08-12T15:56:07.5435499Z Commit: 6785254374ce925a23743850c1cb91912ce5c14c
+2025-08-12T15:56:07.5436319Z Build Date: 2025-07-11T20:04:25Z
+2025-08-12T15:56:07.5436894Z ##[endgroup]
+2025-08-12T15:56:07.5437412Z ##[group]Operating System
+2025-08-12T15:56:07.5438048Z Ubuntu
+2025-08-12T15:56:07.5438478Z 24.04.2
+2025-08-12T15:56:07.5439207Z LTS
+2025-08-12T15:56:07.5439775Z ##[endgroup]
+2025-08-12T15:56:07.5440286Z ##[group]Runner Image
+2025-08-12T15:56:07.5440824Z Image: ubuntu-24.04
+2025-08-12T15:56:07.5441369Z Version: 20250804.2.0
+2025-08-12T15:56:07.5442520Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250804.2/images/ubuntu/Ubuntu2404-Readme.md
+2025-08-12T15:56:07.5444535Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250804.2
+2025-08-12T15:56:07.5445541Z ##[endgroup]
+2025-08-12T15:56:07.5446718Z ##[group]GITHUB_TOKEN Permissions
+2025-08-12T15:56:07.5448636Z Contents: write
+2025-08-12T15:56:07.5449314Z Metadata: read
+2025-08-12T15:56:07.5449946Z PullRequests: write
+2025-08-12T15:56:07.5450479Z ##[endgroup]
+2025-08-12T15:56:07.5452571Z Secret source: Actions
+2025-08-12T15:56:07.5453399Z Prepare workflow directory
+2025-08-12T15:56:07.5866087Z Prepare all required actions
+2025-08-12T15:56:07.5906285Z Getting action download info
+2025-08-12T15:56:08.0516516Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+2025-08-12T15:56:08.6722300Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2025-08-12T15:56:08.7618404Z Download action repository 'actions/github-script@v7' (SHA:60a0d83039c74a4aee543508d2ffcb1c3799cdea)
+2025-08-12T15:56:09.3307519Z Complete job name: beta-release-pp-dev
+2025-08-12T15:56:09.4183324Z ##[group]Run actions/checkout@v4
+2025-08-12T15:56:09.4184726Z with:
+2025-08-12T15:56:09.4185456Z   fetch-depth: 0
+2025-08-12T15:56:09.4186746Z   token: ***
+2025-08-12T15:56:09.4187553Z   repository: mi-examples/pp-dev-js
+2025-08-12T15:56:09.4188554Z   ssh-strict: true
+2025-08-12T15:56:09.4189531Z   ssh-user: git
+2025-08-12T15:56:09.4190318Z   persist-credentials: true
+2025-08-12T15:56:09.4191227Z   clean: true
+2025-08-12T15:56:09.4192036Z   sparse-checkout-cone-mode: true
+2025-08-12T15:56:09.4193033Z   fetch-tags: false
+2025-08-12T15:56:09.4193850Z   show-progress: true
+2025-08-12T15:56:09.4194691Z   lfs: false
+2025-08-12T15:56:09.4195483Z   submodules: false
+2025-08-12T15:56:09.4196316Z   set-safe-directory: true
+2025-08-12T15:56:09.4197514Z ##[endgroup]
+2025-08-12T15:56:09.5366088Z Syncing repository: mi-examples/pp-dev-js
+2025-08-12T15:56:09.5369396Z ##[group]Getting Git version info
+2025-08-12T15:56:09.5370834Z Working directory is '/home/runner/work/pp-dev-js/pp-dev-js'
+2025-08-12T15:56:09.5372936Z [command]/usr/bin/git version
+2025-08-12T15:56:09.5416594Z git version 2.50.1
+2025-08-12T15:56:09.5445938Z ##[endgroup]
+2025-08-12T15:56:09.5463936Z Temporarily overriding HOME='/home/runner/work/_temp/220dadb4-668a-48eb-945a-edec7a63ec32' before making global git config changes
+2025-08-12T15:56:09.5468631Z Adding repository directory to the temporary git global config as a safe directory
+2025-08-12T15:56:09.5479878Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/pp-dev-js/pp-dev-js
+2025-08-12T15:56:09.5527620Z Deleting the contents of '/home/runner/work/pp-dev-js/pp-dev-js'
+2025-08-12T15:56:09.5531913Z ##[group]Initializing the repository
+2025-08-12T15:56:09.5537263Z [command]/usr/bin/git init /home/runner/work/pp-dev-js/pp-dev-js
+2025-08-12T15:56:09.5631211Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-08-12T15:56:09.5633698Z hint: is subject to change. To configure the initial branch name to use in all
+2025-08-12T15:56:09.5635632Z hint: of your new repositories, which will suppress this warning, call:
+2025-08-12T15:56:09.5637665Z hint:
+2025-08-12T15:56:09.5639150Z hint: 	git config --global init.defaultBranch <name>
+2025-08-12T15:56:09.5640660Z hint:
+2025-08-12T15:56:09.5641789Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-08-12T15:56:09.5643884Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-08-12T15:56:09.5645636Z hint:
+2025-08-12T15:56:09.5646392Z hint: 	git branch -m <name>
+2025-08-12T15:56:09.5647282Z hint:
+2025-08-12T15:56:09.5648481Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-08-12T15:56:09.5650699Z Initialized empty Git repository in /home/runner/work/pp-dev-js/pp-dev-js/.git/
+2025-08-12T15:56:09.5654117Z [command]/usr/bin/git remote add origin https://github.com/mi-examples/pp-dev-js
+2025-08-12T15:56:09.5700327Z ##[endgroup]
+2025-08-12T15:56:09.5702824Z ##[group]Disabling automatic garbage collection
+2025-08-12T15:56:09.5705098Z [command]/usr/bin/git config --local gc.auto 0
+2025-08-12T15:56:09.5739080Z ##[endgroup]
+2025-08-12T15:56:09.5741417Z ##[group]Setting up auth
+2025-08-12T15:56:09.5747405Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-08-12T15:56:09.5784814Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-08-12T15:56:09.6072814Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-08-12T15:56:09.6107989Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-08-12T15:56:09.6366081Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-08-12T15:56:09.6419886Z ##[endgroup]
+2025-08-12T15:56:09.6422484Z ##[group]Fetching the repository
+2025-08-12T15:56:09.6429795Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2025-08-12T15:56:10.3445545Z From https://github.com/mi-examples/pp-dev-js
+2025-08-12T15:56:10.3448606Z  * [new branch]      develop                    -> origin/develop
+2025-08-12T15:56:10.3450938Z  * [new branch]      main                       -> origin/main
+2025-08-12T15:56:10.3453080Z  * [new tag]         create-pp-dev@0.4.0        -> create-pp-dev@0.4.0
+2025-08-12T15:56:10.3455160Z  * [new tag]         create-pp-dev@0.4.1        -> create-pp-dev@0.4.1
+2025-08-12T15:56:10.3457484Z  * [new tag]         create-pp-dev@0.4.2        -> create-pp-dev@0.4.2
+2025-08-12T15:56:10.3459783Z  * [new tag]         create-pp-dev@0.5.0-beta.1 -> create-pp-dev@0.5.0-beta.1
+2025-08-12T15:56:10.3462112Z  * [new tag]         v0.0.2                     -> v0.0.2
+2025-08-12T15:56:10.3463945Z  * [new tag]         v0.0.3                     -> v0.0.3
+2025-08-12T15:56:10.3465725Z  * [new tag]         v0.1.0                     -> v0.1.0
+2025-08-12T15:56:10.3467543Z  * [new tag]         v0.1.1                     -> v0.1.1
+2025-08-12T15:56:10.3469376Z  * [new tag]         v0.10.0                    -> v0.10.0
+2025-08-12T15:56:10.3471223Z  * [new tag]         v0.10.1                    -> v0.10.1
+2025-08-12T15:56:10.3473081Z  * [new tag]         v0.2.0                     -> v0.2.0
+2025-08-12T15:56:10.3474844Z  * [new tag]         v0.3.0                     -> v0.3.0
+2025-08-12T15:56:10.3476497Z  * [new tag]         v0.3.1                     -> v0.3.1
+2025-08-12T15:56:10.3477665Z  * [new tag]         v0.3.2                     -> v0.3.2
+2025-08-12T15:56:10.3479041Z  * [new tag]         v0.3.3                     -> v0.3.3
+2025-08-12T15:56:10.3480211Z  * [new tag]         v0.4.0                     -> v0.4.0
+2025-08-12T15:56:10.3481385Z  * [new tag]         v0.5.0                     -> v0.5.0
+2025-08-12T15:56:10.3482557Z  * [new tag]         v0.6.0                     -> v0.6.0
+2025-08-12T15:56:10.3484099Z  * [new tag]         v0.7.0                     -> v0.7.0
+2025-08-12T15:56:10.3485256Z  * [new tag]         v0.8.0                     -> v0.8.0
+2025-08-12T15:56:10.3486839Z  * [new tag]         v0.9.0                     -> v0.9.0
+2025-08-12T15:56:10.3515175Z [command]/usr/bin/git branch --list --remote origin/develop
+2025-08-12T15:56:10.3537779Z   origin/develop
+2025-08-12T15:56:10.3547493Z [command]/usr/bin/git rev-parse refs/remotes/origin/develop
+2025-08-12T15:56:10.3569103Z b578c56fce58c4bc7a99204218a6a5e0a590e77a
+2025-08-12T15:56:10.3575541Z ##[endgroup]
+2025-08-12T15:56:10.3577705Z ##[group]Determining the checkout info
+2025-08-12T15:56:10.3580018Z ##[endgroup]
+2025-08-12T15:56:10.3581432Z [command]/usr/bin/git sparse-checkout disable
+2025-08-12T15:56:10.3621362Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-08-12T15:56:10.3648107Z ##[group]Checking out the ref
+2025-08-12T15:56:10.3651562Z [command]/usr/bin/git checkout --progress --force -B develop refs/remotes/origin/develop
+2025-08-12T15:56:10.3929572Z Switched to a new branch 'develop'
+2025-08-12T15:56:10.3931510Z branch 'develop' set up to track 'origin/develop'.
+2025-08-12T15:56:10.3944764Z ##[endgroup]
+2025-08-12T15:56:10.3983973Z [command]/usr/bin/git log -1 --format=%H
+2025-08-12T15:56:10.4007603Z b578c56fce58c4bc7a99204218a6a5e0a590e77a
+2025-08-12T15:56:10.4288344Z ##[group]Run actions/setup-node@v4
+2025-08-12T15:56:10.4289440Z with:
+2025-08-12T15:56:10.4290115Z   node-version: 20
+2025-08-12T15:56:10.4290989Z   registry-url: https://registry.npmjs.org/
+2025-08-12T15:56:10.4292009Z   cache: npm
+2025-08-12T15:56:10.4292711Z   always-auth: false
+2025-08-12T15:56:10.4293476Z   check-latest: false
+2025-08-12T15:56:10.4294504Z   token: ***
+2025-08-12T15:56:10.4295199Z ##[endgroup]
+2025-08-12T15:56:10.6178996Z Found in cache @ /opt/hostedtoolcache/node/20.19.4/x64
+2025-08-12T15:56:10.6186202Z ##[group]Environment details
+2025-08-12T15:56:12.8111366Z node: v20.19.4
+2025-08-12T15:56:12.8112066Z npm: 10.8.2
+2025-08-12T15:56:12.8112366Z yarn: 1.22.22
+2025-08-12T15:56:12.8113433Z ##[endgroup]
+2025-08-12T15:56:12.8137360Z [command]/opt/hostedtoolcache/node/20.19.4/x64/bin/npm config get cache
+2025-08-12T15:56:13.1950924Z /home/runner/.npm
+2025-08-12T15:56:13.5083571Z Cache hit for: node-cache-Linux-x64-npm-c5c30614ec6e0b0cf8a7c421fbc2fa430ded642121c86e50f30bb5066f47d350
+2025-08-12T15:56:14.8303841Z Received 0 of 198357367 (0.0%), 0.0 MBs/sec
+2025-08-12T15:56:15.8330809Z Received 83886080 of 198357367 (42.3%), 40.0 MBs/sec
+2025-08-12T15:56:16.8344180Z Received 198357367 of 198357367 (100.0%), 63.0 MBs/sec
+2025-08-12T15:56:16.8346291Z Cache Size: ~189 MB (198357367 B)
+2025-08-12T15:56:16.8384969Z [command]/usr/bin/tar -xf /home/runner/work/_temp/4d758000-016d-47ab-ad59-dd9846e2ac6d/cache.tzst -P -C /home/runner/work/pp-dev-js/pp-dev-js --use-compress-program unzstd
+2025-08-12T15:56:17.2131653Z Cache restored successfully
+2025-08-12T15:56:17.2515363Z Cache restored from key: node-cache-Linux-x64-npm-c5c30614ec6e0b0cf8a7c421fbc2fa430ded642121c86e50f30bb5066f47d350
+2025-08-12T15:56:17.2700235Z ##[group]Run npm ci
+2025-08-12T15:56:17.2700545Z [36;1mnpm ci[0m
+2025-08-12T15:56:17.2773716Z shell: /usr/bin/bash -e {0}
+2025-08-12T15:56:17.2773989Z env:
+2025-08-12T15:56:17.2774230Z   NPM_CONFIG_USERCONFIG: /home/runner/work/_temp/.npmrc
+2025-08-12T15:56:17.2774599Z   NODE_AUTH_TOKEN: XXXXX-XXXXX-XXXXX-XXXXX
+2025-08-12T15:56:17.2774867Z ##[endgroup]
+2025-08-12T15:56:24.3840054Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-08-12T15:56:24.5292211Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-08-12T15:56:24.6014802Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-08-12T15:56:24.8960411Z npm warn deprecated @xmldom/xmldom@0.7.13: this version is no longer supported, please update to at least 0.8.*
+2025-08-12T15:56:25.0644949Z npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+2025-08-12T15:56:50.3595035Z 
+2025-08-12T15:56:50.3595906Z added 853 packages, and audited 1062 packages in 33s
+2025-08-12T15:56:50.3597713Z 
+2025-08-12T15:56:50.3600844Z 210 packages are looking for funding
+2025-08-12T15:56:50.3601495Z   run `npm fund` for details
+2025-08-12T15:56:50.3611347Z 
+2025-08-12T15:56:50.3611891Z found 0 vulnerabilities
+2025-08-12T15:56:50.4317412Z ##[group]Run npm run build
+2025-08-12T15:56:50.4317704Z [36;1mnpm run build[0m
+2025-08-12T15:56:50.4358146Z shell: /usr/bin/bash -e {0}
+2025-08-12T15:56:50.4358390Z env:
+2025-08-12T15:56:50.4358641Z   NPM_CONFIG_USERCONFIG: /home/runner/work/_temp/.npmrc
+2025-08-12T15:56:50.4359087Z   NODE_AUTH_TOKEN: XXXXX-XXXXX-XXXXX-XXXXX
+2025-08-12T15:56:50.4359351Z ##[endgroup]
+2025-08-12T15:56:50.5623601Z 
+2025-08-12T15:56:50.5624263Z > @metricinsights/pp-dev@0.10.1 prebuild
+2025-08-12T15:56:50.5624739Z > npm run clean
+2025-08-12T15:56:50.5624911Z 
+2025-08-12T15:56:50.6793127Z 
+2025-08-12T15:56:50.6794082Z > @metricinsights/pp-dev@0.10.1 clean
+2025-08-12T15:56:50.6794488Z > rimraf ./dist
+2025-08-12T15:56:50.6794634Z 
+2025-08-12T15:56:50.7499244Z 
+2025-08-12T15:56:50.7499854Z > @metricinsights/pp-dev@0.10.1 build
+2025-08-12T15:56:50.7500265Z > npm run build:parallel
+2025-08-12T15:56:50.7500422Z 
+2025-08-12T15:56:50.8746787Z 
+2025-08-12T15:56:50.8747661Z > @metricinsights/pp-dev@0.10.1 build:parallel
+2025-08-12T15:56:50.8748419Z > npm run build:node && npm run build:client
+2025-08-12T15:56:50.8749050Z 
+2025-08-12T15:56:51.0016636Z 
+2025-08-12T15:56:51.0017254Z > @metricinsights/pp-dev@0.10.1 build:node
+2025-08-12T15:56:51.0017951Z > rollup --config rollup.config.ts --configPlugin typescript && node scripts/postbuild.js
+2025-08-12T15:56:51.0018334Z 
+2025-08-12T15:56:54.9397844Z [1mloaded rollup.config.ts with warnings[22m
+2025-08-12T15:56:54.9401283Z [1m[33m(!) [plugin typescript] @rollup/plugin-typescript: Rollup 'sourcemap' option must be set to generate source maps.[39m[22m
+2025-08-12T15:56:55.3743392Z [36m
+2025-08-12T15:56:55.3744460Z [1msrc/index.ts, src/plugin.ts, src/cli.ts, src/helpers.ts[22m → [1m./dist/esm[22m...[39m
+2025-08-12T15:56:59.2372801Z [1m[33m(!) Unresolved dependencies[39m[22m
+2025-08-12T15:56:59.2374080Z [90mhttps://rollupjs.org/troubleshooting/#warning-treating-module-as-external-dependency[39m
+2025-08-12T15:56:59.2375252Z [1mnext/constants.js[22m (imported by "src/index.ts")
+2025-08-12T15:56:59.2377170Z [1mpath[22m (imported by "src/cli.ts", "src/plugins/client-injection-plugin.ts", "src/config.ts", "src/constants.ts", "src/lib/changelog-generator.ts" and "src/lib/dist.service.ts")
+2025-08-12T15:56:59.2379895Z [1mfs[22m (imported by "src/cli.ts", "src/plugins/client-injection-plugin.ts", "src/config.ts", "src/constants.ts", "src/lib/changelog-generator.ts" and "src/lib/dist.service.ts")
+2025-08-12T15:56:59.2381492Z [1mnode:perf_hooks[22m (imported by "src/cli.ts")
+2025-08-12T15:56:59.2383889Z [1murl[22m (imported by "src/cli.ts", "src/plugins/client-injection-plugin.ts", "src/config.ts", "src/constants.ts", "src/lib/pp-redirect.middleware.ts", "src/lib/helpers/url.helper.ts", "src/lib/helpers/server.ts" and "src/lib/dist.service.ts")
+2025-08-12T15:56:59.2385774Z [1mnode:process[22m (imported by "src/cli.ts")
+2025-08-12T15:56:59.2386570Z [1mnode:inspector[22m (imported by "src/cli.ts")
+2025-08-12T15:56:59.2387293Z [1mesbuild[22m (imported by "src/config.ts")
+2025-08-12T15:56:59.2388046Z [1mhttps[22m (imported by "src/lib/pp.middleware.ts")
+2025-08-12T15:56:59.2389089Z [1mos[22m (imported by "src/lib/changelog-generator.ts")
+2025-08-12T15:56:59.2390218Z [1mcrypto[22m (imported by "src/lib/changelog-generator.ts" and "src/lib/dist.service.ts")
+2025-08-12T15:56:59.2391296Z [1mprocess[22m (imported by "src/lib/dist.service.ts")
+2025-08-12T15:56:59.2392214Z [1mchild_process[22m (imported by "src/lib/dist.service.ts")
+2025-08-12T15:56:59.2393511Z [1mconsole[22m (imported by "src/lib/dist.service.ts")
+2025-08-12T15:56:59.2394540Z [1mzlib[22m (imported by "src/lib/helpers/content-encoding.helper.ts")
+2025-08-12T15:56:59.2395428Z [32mcreated [1m./dist/esm[22m in [1m3.8s[22m[39m
+2025-08-12T15:56:59.2395991Z [36m
+2025-08-12T15:56:59.2396935Z [1msrc/index.ts, src/plugin.ts, src/cli.ts, src/helpers.ts[22m → [1m./dist/cjs[22m...[39m
+2025-08-12T15:57:02.5738985Z [1m[33m(!) Unresolved dependencies[39m[22m
+2025-08-12T15:57:02.5743132Z [90mhttps://rollupjs.org/troubleshooting/#warning-treating-module-as-external-dependency[39m
+2025-08-12T15:57:02.5744255Z [1mnext/constants.js[22m (imported by "src/index.ts")
+2025-08-12T15:57:02.5746050Z [1mpath[22m (imported by "src/cli.ts", "src/plugins/client-injection-plugin.ts", "src/config.ts", "src/lib/dist.service.ts", "src/constants.ts" and "src/lib/changelog-generator.ts")
+2025-08-12T15:57:02.5748443Z [1mfs[22m (imported by "src/cli.ts", "src/plugins/client-injection-plugin.ts", "src/config.ts", "src/lib/dist.service.ts", "src/constants.ts" and "src/lib/changelog-generator.ts")
+2025-08-12T15:57:02.5750022Z [1mnode:perf_hooks[22m (imported by "src/cli.ts")
+2025-08-12T15:57:02.5752268Z [1murl[22m (imported by "src/cli.ts", "src/plugins/client-injection-plugin.ts", "src/config.ts", "src/lib/helpers/url.helper.ts", "src/lib/dist.service.ts", "src/lib/pp-redirect.middleware.ts", "src/constants.ts" and "src/lib/helpers/server.ts")
+2025-08-12T15:57:02.5753954Z [1mnode:process[22m (imported by "src/cli.ts")
+2025-08-12T15:57:02.5754636Z [1mnode:inspector[22m (imported by "src/cli.ts")
+2025-08-12T15:57:02.5755291Z [1mesbuild[22m (imported by "src/config.ts")
+2025-08-12T15:57:02.5756004Z [1mhttps[22m (imported by "src/lib/pp.middleware.ts")
+2025-08-12T15:57:02.5757019Z [1mcrypto[22m (imported by "src/lib/dist.service.ts" and "src/lib/changelog-generator.ts")
+2025-08-12T15:57:02.5757962Z [1mprocess[22m (imported by "src/lib/dist.service.ts")
+2025-08-12T15:57:02.5758914Z [1mchild_process[22m (imported by "src/lib/dist.service.ts")
+2025-08-12T15:57:02.5759709Z [1mconsole[22m (imported by "src/lib/dist.service.ts")
+2025-08-12T15:57:02.5760438Z [1mos[22m (imported by "src/lib/changelog-generator.ts")
+2025-08-12T15:57:02.5761252Z [1mzlib[22m (imported by "src/lib/helpers/content-encoding.helper.ts")
+2025-08-12T15:57:02.5761989Z [32mcreated [1m./dist/cjs[22m in [1m3.3s[22m[39m
+2025-08-12T15:57:02.5762470Z [36m
+2025-08-12T15:57:02.5763028Z [1msrc/index.ts[22m → [1mdist/types[22m...[39m
+2025-08-12T15:57:03.5465403Z [32mcreated [1mdist/types[22m in [1m972ms[22m[39m
+2025-08-12T15:57:03.6420501Z ✅ Post-build processing completed successfully
+2025-08-12T15:57:03.6425228Z 📦 ESM build: /home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/dist/esm
+2025-08-12T15:57:03.6439993Z 📦 CJS build: /home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/dist/cjs
+2025-08-12T15:57:03.6441135Z 📦 Types: /home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/dist/types
+2025-08-12T15:57:03.6442308Z 📦 Client: /home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/dist/client
+2025-08-12T15:57:03.7617791Z 
+2025-08-12T15:57:03.7618373Z > @metricinsights/pp-dev@0.10.1 build:client
+2025-08-12T15:57:03.7619224Z > rollup --config src/client/rollup.config.ts --configPlugin typescript
+2025-08-12T15:57:03.7619556Z 
+2025-08-12T15:57:07.7232091Z [1mloaded src/client/rollup.config.ts with warnings[22m
+2025-08-12T15:57:07.7235546Z [1m[33m(!) [plugin typescript] @rollup/plugin-typescript: Rollup 'sourcemap' option must be set to generate source maps.[39m[22m
+2025-08-12T15:57:08.2950485Z [36m
+2025-08-12T15:57:08.2951861Z [1m/home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/src/client/index.ts[22m → [1mdist/client/client.js[22m...[39m
+2025-08-12T15:57:09.5423274Z DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+2025-08-12T15:57:09.5423894Z 
+2025-08-12T15:57:09.5424164Z More info: https://sass-lang.com/d/legacy-js-api
+2025-08-12T15:57:09.6192634Z 
+2025-08-12T15:57:09.6193495Z [32mcreated [1mdist/client/client.js[22m in [1m1.3s[22m[39m
+2025-08-12T15:57:09.6908156Z ##[group]Run if [[ ! -d "dist" ]]; then
+2025-08-12T15:57:09.6908497Z [36;1mif [[ ! -d "dist" ]]; then[0m
+2025-08-12T15:57:09.6909010Z [36;1m  echo "Error: Build output directory 'dist' not found"[0m
+2025-08-12T15:57:09.6909319Z [36;1m  exit 1[0m
+2025-08-12T15:57:09.6909498Z [36;1mfi[0m
+2025-08-12T15:57:09.6909692Z [36;1mecho "Build verification passed"[0m
+2025-08-12T15:57:09.6949718Z shell: /usr/bin/bash -e {0}
+2025-08-12T15:57:09.6949943Z env:
+2025-08-12T15:57:09.6950191Z   NPM_CONFIG_USERCONFIG: /home/runner/work/_temp/.npmrc
+2025-08-12T15:57:09.6950502Z   NODE_AUTH_TOKEN: XXXXX-XXXXX-XXXXX-XXXXX
+2025-08-12T15:57:09.6950752Z ##[endgroup]
+2025-08-12T15:57:09.7009527Z Build verification passed
+2025-08-12T15:57:09.7032314Z ##[group]Run git config --global user.name "github-actions[bot]"
+2025-08-12T15:57:09.7032758Z [36;1mgit config --global user.name "github-actions[bot]"[0m
+2025-08-12T15:57:09.7033214Z [36;1mgit config --global user.email "github-actions[bot]@users.noreply.github.com"[0m
+2025-08-12T15:57:09.7069222Z shell: /usr/bin/bash -e {0}
+2025-08-12T15:57:09.7069450Z env:
+2025-08-12T15:57:09.7069683Z   NPM_CONFIG_USERCONFIG: /home/runner/work/_temp/.npmrc
+2025-08-12T15:57:09.7070000Z   NODE_AUTH_TOKEN: XXXXX-XXXXX-XXXXX-XXXXX
+2025-08-12T15:57:09.7070252Z ##[endgroup]
+2025-08-12T15:57:09.7186806Z ##[group]Run echo "Running beta release for package: pp-dev"
+2025-08-12T15:57:09.7187243Z [36;1mecho "Running beta release for package: pp-dev"[0m
+2025-08-12T15:57:09.7187537Z [36;1mnpm run release[0m
+2025-08-12T15:57:09.7224904Z shell: /usr/bin/bash -e {0}
+2025-08-12T15:57:09.7225128Z env:
+2025-08-12T15:57:09.7225363Z   NPM_CONFIG_USERCONFIG: /home/runner/work/_temp/.npmrc
+2025-08-12T15:57:09.7225901Z   NODE_AUTH_TOKEN: ***
+2025-08-12T15:57:09.7226209Z   GITHUB_TOKEN: ***
+2025-08-12T15:57:09.7226470Z   NPM_TOKEN: ***
+2025-08-12T15:57:09.7226665Z ##[endgroup]
+2025-08-12T15:57:09.7282424Z Running beta release for package: pp-dev
+2025-08-12T15:57:09.8332620Z 
+2025-08-12T15:57:09.8333087Z > @metricinsights/pp-dev@0.10.1 release
+2025-08-12T15:57:09.8333448Z > semantic-release
+2025-08-12T15:57:09.8333600Z 
+2025-08-12T15:57:10.3739514Z [3:57:10 PM] [semantic-release] › ℹ  Running semantic-release version 24.2.7
+2025-08-12T15:57:10.7387774Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "verifyConditions" from "@semantic-release/changelog"
+2025-08-12T15:57:10.7389240Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "verifyConditions" from "@semantic-release/npm"
+2025-08-12T15:57:10.7392526Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "verifyConditions" from "@semantic-release/git"
+2025-08-12T15:57:10.7394477Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "verifyConditions" from "@semantic-release/github"
+2025-08-12T15:57:10.7415861Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "prepare" from "@semantic-release/changelog"
+2025-08-12T15:57:10.7417161Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "prepare" from "@semantic-release/npm"
+2025-08-12T15:57:10.7418529Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "prepare" from "@semantic-release/git"
+2025-08-12T15:57:10.7420927Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "publish" from "@semantic-release/npm"
+2025-08-12T15:57:10.7423139Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "publish" from "@semantic-release/github"
+2025-08-12T15:57:10.7425235Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "addChannel" from "@semantic-release/npm"
+2025-08-12T15:57:10.7426797Z [3:57:10 PM] [semantic-release] › ✔  Loaded plugin "addChannel" from "@semantic-release/github"
+2025-08-12T15:57:12.9260826Z [3:57:12 PM] [semantic-release] › ✔  Run automated release from branch develop on repository git+https://github.com/mi-examples/pp-dev-js.git
+2025-08-12T15:57:13.2297872Z [3:57:13 PM] [semantic-release] › ✔  Allowed to push to the Git repository
+2025-08-12T15:57:13.2302439Z [3:57:13 PM] [semantic-release] › ℹ  Start step "verifyConditions" of plugin "@semantic-release/changelog"
+2025-08-12T15:57:13.2329390Z [3:57:13 PM] [semantic-release] › ✔  Completed step "verifyConditions" of plugin "@semantic-release/changelog"
+2025-08-12T15:57:13.2330253Z [3:57:13 PM] [semantic-release] › ℹ  Start step "verifyConditions" of plugin "@semantic-release/npm"
+2025-08-12T15:57:13.2368293Z [3:57:13 PM] [semantic-release] › ✔  Completed step "verifyConditions" of plugin "@semantic-release/npm"
+2025-08-12T15:57:13.2369976Z [3:57:13 PM] [semantic-release] › ℹ  Start step "verifyConditions" of plugin "@semantic-release/git"
+2025-08-12T15:57:13.2384289Z [3:57:13 PM] [semantic-release] › ✔  Completed step "verifyConditions" of plugin "@semantic-release/git"
+2025-08-12T15:57:13.2385719Z [3:57:13 PM] [semantic-release] › ℹ  Start step "verifyConditions" of plugin "@semantic-release/github"
+2025-08-12T15:57:13.2405479Z [3:57:13 PM] [semantic-release] [@semantic-release/github] › ℹ  Verify GitHub authentication (https://api.github.com)
+2025-08-12T15:57:13.6048999Z [3:57:13 PM] [semantic-release] › ✔  Completed step "verifyConditions" of plugin "@semantic-release/github"
+2025-08-12T15:57:13.6113061Z [3:57:13 PM] [semantic-release] › ℹ  Found git tag v0.10.1 associated with version 0.10.1 on branch develop
+2025-08-12T15:57:13.6216672Z [3:57:13 PM] [semantic-release] › ℹ  Found 21 commits since last release
+2025-08-12T15:57:13.6220624Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.6244879Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Start step "analyzeCommits" of plugin "@semantic-release/commit-analyzer"
+2025-08-12T15:57:13.7130742Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Found 10 commits for package @metricinsights/pp-dev since last release
+2025-08-12T15:57:13.7251103Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: feat(pp-dev): add dependency version synchronization for create-pp-dev releases
+2025-08-12T15:57:13.7257813Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The release type for the commit is minor
+2025-08-12T15:57:13.7259292Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: docs(pp-dev): update README with build improvements and new features
+2025-08-12T15:57:13.7263615Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The commit should not trigger a release
+2025-08-12T15:57:13.7264916Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: chore(test): update test package dependencies and configurations
+2025-08-12T15:57:13.7266676Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The commit should not trigger a release
+2025-08-12T15:57:13.7268300Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: feat(pp-dev): add semantic release configuration and update dependencies
+2025-08-12T15:57:13.7270010Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The release type for the commit is minor
+2025-08-12T15:57:13.7271503Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: refactor(pp-dev): update source code and improve middleware functionality
+2025-08-12T15:57:13.7273066Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The commit should not trigger a release
+2025-08-12T15:57:13.7274780Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: feat(pp-dev): add esbuild configuration and build optimization scripts
+2025-08-12T15:57:13.7276222Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The release type for the commit is minor
+2025-08-12T15:57:13.7277846Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: chore: update package version and dependencies in package.json and package-lock.json
+2025-08-12T15:57:13.7279247Z 
+2025-08-12T15:57:13.7279543Z - Bump version from 0.10.0 to 0.10.1 in both package.json and package-lock.json.
+2025-08-12T15:57:13.7280528Z - Upgrade esbuild dependency from 0.25.3 to 0.25.8 and update related sub-dependencies accordingly.
+2025-08-12T15:57:13.7281675Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The commit should not trigger a release
+2025-08-12T15:57:13.7283766Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: docs: add CONTRIBUTING.md to outline contribution guidelines and commit message conventions
+2025-08-12T15:57:13.7284766Z 
+2025-08-12T15:57:13.7285203Z feat(create-pp-dev): add new template functionality and updated packages
+2025-08-12T15:57:13.7286236Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The commit should not trigger a release
+2025-08-12T15:57:13.7287323Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: chore: refine semantic-release configuration for improved asset handling
+2025-08-12T15:57:13.7287849Z 
+2025-08-12T15:57:13.7288443Z - Update the configuration for "@semantic-release/changelog" and "@semantic-release/git" in package.json and .releaserc.json to include detailed release notes.
+2025-08-12T15:57:13.7289643Z - Adjust the asset list for release PRs to ensure consistency and clarity in the release process.
+2025-08-12T15:57:13.7290469Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The commit should not trigger a release
+2025-08-12T15:57:13.7291470Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analyzing commit: chore: update release configuration for semantic-release
+2025-08-12T15:57:13.7291944Z 
+2025-08-12T15:57:13.7292472Z - Replace "@semantic-release/git" with updated configuration for semantic-release-github-pullrequest in package.json and .releaserc.json.
+2025-08-12T15:57:13.7293375Z - Include "package-lock.json" in the assets for release PRs and adjust branch naming conventions for better clarity.
+2025-08-12T15:57:13.7294219Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  The commit should not trigger a release
+2025-08-12T15:57:13.7295109Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Analysis of 10 commits complete: minor release
+2025-08-12T15:57:13.7296135Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Completed step "analyzeCommits" of plugin "@semantic-release/commit-analyzer"
+2025-08-12T15:57:13.7297101Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7297920Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7307367Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/release-notes-generator" does not provide step "analyzeCommits"
+2025-08-12T15:57:13.7309470Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7310994Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7327539Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/changelog" does not provide step "analyzeCommits"
+2025-08-12T15:57:13.7329459Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7330463Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7348292Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/npm" does not provide step "analyzeCommits"
+2025-08-12T15:57:13.7351026Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7354204Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7390936Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/git" does not provide step "analyzeCommits"
+2025-08-12T15:57:13.7392923Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7395338Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7406476Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/github" does not provide step "analyzeCommits"
+2025-08-12T15:57:13.7408277Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7410080Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7426968Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:13.7428760Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7430545Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7486508Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:13.7489666Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7493410Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7510796Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:13.7512560Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7514314Z [3:57:13 PM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7537997Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:13.7541709Z [3:57:13 PM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7594108Z [3:57:13 PM] [semantic-release] › ℹ  The next release version is 0.11.0-beta.1
+2025-08-12T15:57:13.7596232Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7612534Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/commit-analyzer" does not provide step "generateNotes"
+2025-08-12T15:57:13.7614468Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7616033Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.7628974Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Start step "generateNotes" of plugin "@semantic-release/release-notes-generator"
+2025-08-12T15:57:13.7687391Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Found 10 commits for package @metricinsights/pp-dev since last release
+2025-08-12T15:57:13.8151418Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Completed step "generateNotes" of plugin "@semantic-release/release-notes-generator"
+2025-08-12T15:57:13.8154071Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8155792Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8157780Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/changelog" does not provide step "generateNotes"
+2025-08-12T15:57:13.8160045Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8161639Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8163445Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/npm" does not provide step "generateNotes"
+2025-08-12T15:57:13.8165333Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8167019Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8169022Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/git" does not provide step "generateNotes"
+2025-08-12T15:57:13.8171075Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8172657Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8187318Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/github" does not provide step "generateNotes"
+2025-08-12T15:57:13.8190304Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8191851Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8207415Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:13.8209034Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8210327Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8226906Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:13.8228334Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8229697Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8246528Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:13.8247973Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8249288Z [3:57:13 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8265897Z [3:57:13 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:13.8266752Z [3:57:13 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:13.8288525Z [3:57:13 PM] [semantic-release] › ℹ  Start step "prepare" of plugin "@semantic-release/changelog"
+2025-08-12T15:57:13.8309031Z [3:57:13 PM] [semantic-release] [@semantic-release/changelog] › ℹ  Update /home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/CHANGELOG.md
+2025-08-12T15:57:13.8318090Z [3:57:13 PM] [semantic-release] › ✔  Completed step "prepare" of plugin "@semantic-release/changelog"
+2025-08-12T15:57:13.8368328Z [3:57:13 PM] [semantic-release] › ℹ  Start step "prepare" of plugin "@semantic-release/npm"
+2025-08-12T15:57:13.8423620Z [3:57:13 PM] [semantic-release] [@semantic-release/npm] › ℹ  Write version 0.11.0-beta.1 to package.json in /home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev
+2025-08-12T15:57:13.9889754Z 
+2025-08-12T15:57:13.9890182Z > version
+2025-08-12T15:57:13.9890821Z > npm version --commit-hooks false --git-tag-version false
+2025-08-12T15:57:13.9891279Z 
+2025-08-12T15:57:14.1020903Z {
+2025-08-12T15:57:14.1021388Z   '@metricinsights/pp-dev': '0.11.0-beta.1',
+2025-08-12T15:57:14.1021771Z   npm: '10.9.3',
+2025-08-12T15:57:14.1021986Z   node: '20.19.4',
+2025-08-12T15:57:14.1022195Z   acorn: '8.14.0',
+2025-08-12T15:57:14.1022394Z   ada: '2.9.2',
+2025-08-12T15:57:14.1022590Z   ares: '1.34.5',
+2025-08-12T15:57:14.1022786Z   brotli: '1.1.0',
+2025-08-12T15:57:14.1022997Z   cjs_module_lexer: '1.4.1',
+2025-08-12T15:57:14.1023232Z   cldr: '47.0',
+2025-08-12T15:57:14.1023425Z   icu: '77.1',
+2025-08-12T15:57:14.1023808Z   llhttp: '9.2.1',
+2025-08-12T15:57:14.1024040Z   modules: '115',
+2025-08-12T15:57:14.1024239Z   napi: '9',
+2025-08-12T15:57:14.1024428Z   nghttp2: '1.61.0',
+2025-08-12T15:57:14.1024637Z   nghttp3: '0.7.0',
+2025-08-12T15:57:14.1024837Z   ngtcp2: '1.1.0',
+2025-08-12T15:57:14.1025041Z   openssl: '3.0.15+quic',
+2025-08-12T15:57:14.1025266Z   simdutf: '6.4.2',
+2025-08-12T15:57:14.1025458Z   tz: '2025b',
+2025-08-12T15:57:14.1025915Z   undici: '6.21.2',
+2025-08-12T15:57:14.1026128Z   unicode: '16.0',
+2025-08-12T15:57:14.1026329Z   uv: '1.46.0',
+2025-08-12T15:57:14.1026525Z   uvwasi: '0.0.21',
+2025-08-12T15:57:14.1026727Z   v8: '11.3.244.8-node.29',
+2025-08-12T15:57:14.1026994Z   zlib: '1.3.0.1-motley-82a5fec'
+2025-08-12T15:57:14.1027495Z }
+2025-08-12T15:57:14.1077856Z v0.11.0-beta.1
+2025-08-12T15:57:14.1145891Z [3:57:14 PM] [semantic-release] › ✔  Completed step "prepare" of plugin "@semantic-release/npm"
+2025-08-12T15:57:14.1191895Z [3:57:14 PM] [semantic-release] › ℹ  Start step "prepare" of plugin "@semantic-release/git"
+2025-08-12T15:57:14.2544589Z [3:57:14 PM] [semantic-release] [@semantic-release/git] › ℹ  Found 3 file(s) to commit
+2025-08-12T15:57:15.0853464Z [3:57:15 PM] [semantic-release] [@semantic-release/git] › ℹ  Prepared Git release: v0.11.0-beta.1
+2025-08-12T15:57:15.0854941Z [3:57:15 PM] [semantic-release] › ✔  Completed step "prepare" of plugin "@semantic-release/git"
+2025-08-12T15:57:15.0901576Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.0916103Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/commit-analyzer" does not provide step "generateNotes"
+2025-08-12T15:57:15.0917316Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.0918192Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.0930112Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Start step "generateNotes" of plugin "@semantic-release/release-notes-generator"
+2025-08-12T15:57:15.0981159Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Found 10 commits for package @metricinsights/pp-dev since last release
+2025-08-12T15:57:15.1219530Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Completed step "generateNotes" of plugin "@semantic-release/release-notes-generator"
+2025-08-12T15:57:15.1220652Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1221495Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1234132Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/changelog" does not provide step "generateNotes"
+2025-08-12T15:57:15.1236232Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1237626Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1247473Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/npm" does not provide step "generateNotes"
+2025-08-12T15:57:15.1248471Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1249444Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1260610Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/git" does not provide step "generateNotes"
+2025-08-12T15:57:15.1261613Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1262471Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1273404Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/github" does not provide step "generateNotes"
+2025-08-12T15:57:15.1274877Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1275842Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1292430Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:15.1293420Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1294383Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1304951Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:15.1306030Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1307031Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1317967Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:15.1319265Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1320286Z [3:57:15 PM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:15.1330672Z [3:57:15 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:15.1331821Z [3:57:15 PM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:16.7268318Z [3:57:16 PM] [semantic-release] › ✔  Created tag v0.11.0-beta.1
+2025-08-12T15:57:16.7270021Z [3:57:16 PM] [semantic-release] › ℹ  Start step "publish" of plugin "@semantic-release/npm"
+2025-08-12T15:57:16.7299670Z [3:57:16 PM] [semantic-release] [@semantic-release/npm] › ℹ  Skip publishing to npm registry as npmPublish is false
+2025-08-12T15:57:16.7301164Z [3:57:16 PM] [semantic-release] › ✔  Completed step "publish" of plugin "@semantic-release/npm"
+2025-08-12T15:57:16.7302405Z [3:57:16 PM] [semantic-release] › ℹ  Start step "publish" of plugin "@semantic-release/github"
+2025-08-12T15:57:18.3991971Z [3:57:18 PM] [semantic-release] [@semantic-release/github] › ℹ  Published file https://github.com/mi-examples/pp-dev-js/releases/download/untagged-b8342d42dec9ae2e26af/package.json
+2025-08-12T15:57:19.2331006Z [3:57:19 PM] [semantic-release] [@semantic-release/github] › ℹ  Published file https://github.com/mi-examples/pp-dev-js/releases/download/untagged-b8342d42dec9ae2e26af/CHANGELOG.md
+2025-08-12T15:57:20.2833118Z [3:57:20 PM] [semantic-release] [@semantic-release/github] › ℹ  Published file https://github.com/mi-examples/pp-dev-js/releases/download/untagged-b8342d42dec9ae2e26af/package-lock.json
+2025-08-12T15:57:21.1961847Z [3:57:21 PM] [semantic-release] [@semantic-release/github] › ℹ  Published GitHub release: https://github.com/mi-examples/pp-dev-js/releases/tag/v0.11.0-beta.1
+2025-08-12T15:57:21.1963096Z [3:57:21 PM] [semantic-release] › ✔  Completed step "publish" of plugin "@semantic-release/github"
+2025-08-12T15:57:21.1967639Z [3:57:21 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.1982133Z [3:57:21 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/commit-analyzer" does not provide step "success"
+2025-08-12T15:57:21.1983273Z [3:57:21 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.1984193Z [3:57:21 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.1994472Z [3:57:21 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/release-notes-generator" does not provide step "success"
+2025-08-12T15:57:21.1996087Z [3:57:21 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.1996988Z [3:57:21 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.2006724Z [3:57:21 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/changelog" does not provide step "success"
+2025-08-12T15:57:21.2007877Z [3:57:21 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.2008717Z [3:57:21 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.2018970Z [3:57:21 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/npm" does not provide step "success"
+2025-08-12T15:57:21.2020191Z [3:57:21 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.2021076Z [3:57:21 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.2031247Z [3:57:21 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Plugin "@semantic-release/git" does not provide step "success"
+2025-08-12T15:57:21.2032395Z [3:57:21 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.2033265Z [3:57:21 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:21.2043185Z [3:57:21 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Start step "success" of plugin "@semantic-release/github"
+2025-08-12T15:57:21.2092816Z [3:57:21 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  Found 10 commits for package @metricinsights/pp-dev since last release
+2025-08-12T15:57:23.6855158Z [3:57:23 PM] [semantic-release] › ✘  Failed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6856311Z [3:57:23 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6869312Z [3:57:23 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:23.6870538Z [3:57:23 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6871509Z [3:57:23 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6881620Z [3:57:23 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:23.6882614Z [3:57:23 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6883573Z [3:57:23 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6894127Z [3:57:23 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:23.6913824Z [3:57:23 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6915276Z [3:57:23 PM] [semantic-release] › ℹ  Start step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6916528Z [3:57:23 PM] [semantic-release] [[Function: semantic-release-monorepo]] › ℹ  No more plugins
+2025-08-12T15:57:23.6917814Z [3:57:23 PM] [semantic-release] › ✔  Completed step "success" of plugin "[Function: semantic-release-monorepo]"
+2025-08-12T15:57:23.6933698Z [3:57:23 PM] [semantic-release] › ✘  An error occurred while running semantic-release: Error: Could not resolve to an issue or pull request with the number of 1830.
+2025-08-12T15:57:23.6935493Z     at file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/node_modules/aggregate-error/index.js:23:26
+2025-08-12T15:57:23.6936567Z     at Array.map (<anonymous>)
+2025-08-12T15:57:23.6938128Z     at new AggregateError (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/node_modules/aggregate-error/index.js:16:19)
+2025-08-12T15:57:23.6939910Z     at file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/lib/plugins/pipeline.js:55:13
+2025-08-12T15:57:23.6941060Z     at async pluginsConfigAccumulator.<computed> [as success] (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/lib/plugins/index.js:87:11)
+2025-08-12T15:57:23.6942092Z     at async run (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/index.js:218:3)
+2025-08-12T15:57:23.6943397Z     at async Module.default (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/index.js:278:22)
+2025-08-12T15:57:23.6944339Z     at async default (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/cli.js:55:5) {
+2025-08-12T15:57:23.6944861Z   type: 'NOT_FOUND',
+2025-08-12T15:57:23.6945108Z   path: [ 'repository', 'issue1830' ],
+2025-08-12T15:57:23.6945387Z   locations: [ { line: 4, column: 9 } ],
+2025-08-12T15:57:23.6945724Z   pluginName: '[Function: semantic-release-monorepo]'
+2025-08-12T15:57:23.6946007Z }
+2025-08-12T15:57:23.6946192Z AggregateError: 
+2025-08-12T15:57:23.6946541Z     Error: Could not resolve to an issue or pull request with the number of 1830.
+2025-08-12T15:57:23.6946924Z         at Array.map (<anonymous>)
+2025-08-12T15:57:23.6947507Z         at file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/lib/plugins/pipeline.js:55:13
+2025-08-12T15:57:23.6948551Z         at async pluginsConfigAccumulator.<computed> [as success] (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/lib/plugins/index.js:87:11)
+2025-08-12T15:57:23.6949750Z         at async run (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/index.js:218:3)
+2025-08-12T15:57:23.6950592Z         at async Module.default (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/index.js:278:22)
+2025-08-12T15:57:23.6951423Z         at async default (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/semantic-release/cli.js:55:5)
+2025-08-12T15:57:23.6952434Z     at [90mfile:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/lib/plugins/pipeline.js:55:13
+2025-08-12T15:57:23.6954046Z     at async pluginsConfigAccumulator.<computed> [as success] [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/lib/plugins/index.js:87:11[90m)[39m
+2025-08-12T15:57:23.6956463Z     at async run [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/index.js:218:3[90m)[39m
+2025-08-12T15:57:23.6958053Z     at async Module.default [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/index.js:278:22[90m)[39m
+2025-08-12T15:57:23.6959387Z     at async default [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/cli.js:55:5[90m)[39m {
+2025-08-12T15:57:23.6959961Z   errors: [
+2025-08-12T15:57:23.6960292Z     Error: Could not resolve to an issue or pull request with the number of 1830.
+2025-08-12T15:57:23.6961219Z         at [90mfile:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/node_modules/[4maggregate-error[24m/index.js:23:26
+2025-08-12T15:57:23.6961883Z         at Array.map (<anonymous>)
+2025-08-12T15:57:23.6962807Z         at new AggregateError [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/node_modules/[4maggregate-error[24m/index.js:16:19[90m)[39m
+2025-08-12T15:57:23.6964164Z         at [90mfile:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/lib/plugins/pipeline.js:55:13
+2025-08-12T15:57:23.6965465Z         at async pluginsConfigAccumulator.<computed> [as success] [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/lib/plugins/index.js:87:11[90m)[39m
+2025-08-12T15:57:23.6966693Z         at async run [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/index.js:218:3[90m)[39m
+2025-08-12T15:57:23.6967785Z         at async Module.default [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/index.js:278:22[90m)[39m
+2025-08-12T15:57:23.6969089Z         at async default [90m(file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/[39mnode_modules/[4msemantic-release[24m/cli.js:55:5[90m)[39m {
+2025-08-12T15:57:23.6969737Z       type: [32m'NOT_FOUND'[39m,
+2025-08-12T15:57:23.6970029Z       path: [36m[Array][39m,
+2025-08-12T15:57:23.6970314Z       locations: [36m[Array][39m,
+2025-08-12T15:57:23.6970708Z       pluginName: [32m'[Function: semantic-release-monorepo]'[39m
+2025-08-12T15:57:23.6971018Z     }
+2025-08-12T15:57:23.6971171Z   ]
+2025-08-12T15:57:23.6971746Z }file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/@octokit/graphql/dist-bundle/index.js:89
+2025-08-12T15:57:23.6972262Z       throw new GraphqlResponseError(
+2025-08-12T15:57:23.6972495Z             ^
+2025-08-12T15:57:23.6972603Z 
+2025-08-12T15:57:23.6972872Z GraphqlResponseError: Request failed due to following response errors:
+2025-08-12T15:57:23.6973353Z  - Could not resolve to an issue or pull request with the number of 1830.
+2025-08-12T15:57:23.6974001Z     at file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/@octokit/graphql/dist-bundle/index.js:89:13
+2025-08-12T15:57:23.6974830Z     at async file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/@semantic-release/github/lib/success.js:176:32
+2025-08-12T15:57:23.6975370Z     at async Promise.all (index 0)
+2025-08-12T15:57:23.6975976Z     at async inChunks (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/@semantic-release/github/lib/success.js:354:19)
+2025-08-12T15:57:23.6976883Z     at async success (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/@semantic-release/github/lib/success.js:175:16)
+2025-08-12T15:57:23.6977767Z     at async success (file:///home/runner/work/pp-dev-js/pp-dev-js/packages/pp-dev/node_modules/@semantic-release/github/index.js:91:3) {
+2025-08-12T15:57:23.6978429Z   errors: [
+2025-08-12T15:57:23.6978590Z     {
+2025-08-12T15:57:23.6978912Z       type: 'NOT_FOUND',
+2025-08-12T15:57:23.6979203Z       path: [ 'repository', 'issue1830' ],
+2025-08-12T15:57:23.6979492Z       locations: [ { line: 4, column: 9 } ],
+2025-08-12T15:57:23.6979900Z       message: 'Could not resolve to an issue or pull request with the number of 1830.',
+2025-08-12T15:57:23.6980343Z       pluginName: '[Function: semantic-release-monorepo]'
+2025-08-12T15:57:23.6980611Z     }
+2025-08-12T15:57:23.6980764Z   ],
+2025-08-12T15:57:23.6980972Z   data: { repository: { issue1830: null } },
+2025-08-12T15:57:23.6981211Z   request: {
+2025-08-12T15:57:23.6981395Z     query: '#graphql\n' +
+2025-08-12T15:57:23.6981714Z       '    query getRelatedIssues($owner: String!, $repo: String!) {\n' +
+2025-08-12T15:57:23.6982099Z       '      repository(owner: $owner, name: $repo) {\n' +
+2025-08-12T15:57:23.6982445Z       '        issue1830: issueOrPullRequest(number: 1830) {\n' +
+2025-08-12T15:57:23.6982755Z       '              ... on Issue {\n' +
+2025-08-12T15:57:23.6982988Z       '                \n' +
+2025-08-12T15:57:23.6983194Z       '  __typename\n' +
+2025-08-12T15:57:23.6983383Z       '  id\n' +
+2025-08-12T15:57:23.6983559Z       '  title\n' +
+2025-08-12T15:57:23.6983736Z       '  body\n' +
+2025-08-12T15:57:23.6983914Z       '  url\n' +
+2025-08-12T15:57:23.6984221Z       '  number\n' +
+2025-08-12T15:57:23.6984417Z       '  createdAt\n' +
+2025-08-12T15:57:23.6984608Z       '  updatedAt\n' +
+2025-08-12T15:57:23.6984801Z       '  closedAt\n' +
+2025-08-12T15:57:23.6984992Z       '  comments {\n' +
+2025-08-12T15:57:23.6985191Z       '    totalCount\n' +
+2025-08-12T15:57:23.6985387Z       '  }\n' +
+2025-08-12T15:57:23.6985554Z       '  state\n' +
+2025-08-12T15:57:23.6985729Z       '  author {\n' +
+2025-08-12T15:57:23.6985914Z       '    login\n' +
+2025-08-12T15:57:23.6986096Z       '    url\n' +
+2025-08-12T15:57:23.6986276Z       '    avatarUrl\n' +
+2025-08-12T15:57:23.6986483Z       '    __typename\n' +
+2025-08-12T15:57:23.6986671Z       '  }\n' +
+2025-08-12T15:57:23.6986870Z       '  authorAssociation\n' +
+2025-08-12T15:57:23.6987118Z       '  activeLockReason\n' +
+2025-08-12T15:57:23.6987369Z       '  labels(first: 40) {\n' +
+2025-08-12T15:57:23.6987593Z       '    nodes {\n' +
+2025-08-12T15:57:23.6987777Z       '      id\n' +
+2025-08-12T15:57:23.6987955Z       '      url\n' +
+2025-08-12T15:57:23.6988142Z       '      name\n' +
+2025-08-12T15:57:23.6988331Z       '      color\n' +
+2025-08-12T15:57:23.6988524Z       '      description\n' +
+2025-08-12T15:57:23.6988740Z       '      isDefault\n' +
+2025-08-12T15:57:23.6989132Z       '    }\n' +
+2025-08-12T15:57:23.6989308Z       '  }\n' +
+2025-08-12T15:57:23.6989485Z       '  milestone {\n' +
+2025-08-12T15:57:23.6989680Z       '    url\n' +
+2025-08-12T15:57:23.6989851Z       '    id\n' +
+2025-08-12T15:57:23.6990024Z       '    number\n' +
+2025-08-12T15:57:23.6990208Z       '    state\n' +
+2025-08-12T15:57:23.6990395Z       '    title\n' +
+2025-08-12T15:57:23.6990606Z       '    description\n' +
+2025-08-12T15:57:23.6990812Z       '    creator {\n' +
+2025-08-12T15:57:23.6991001Z       '      login\n' +
+2025-08-12T15:57:23.6991188Z       '      url\n' +
+2025-08-12T15:57:23.6991370Z       '      avatarUrl\n' +
+2025-08-12T15:57:23.6991567Z       '    }\n' +
+2025-08-12T15:57:23.6991743Z       '    createdAt\n' +
+2025-08-12T15:57:23.6991945Z       '    closedAt\n' +
+2025-08-12T15:57:23.6992166Z       '    updatedAt\n' +
+2025-08-12T15:57:23.6992358Z       '  }\n' +
+2025-08-12T15:57:23.6992533Z       '  locked\n' +
+2025-08-12T15:57:23.6992707Z       '\n' +
+2025-08-12T15:57:23.6992877Z       '              }\n' +
+2025-08-12T15:57:23.6993117Z       '              ... on PullRequest {\n' +
+2025-08-12T15:57:23.6993363Z       '                \n' +
+2025-08-12T15:57:23.6993569Z       '  __typename\n' +
+2025-08-12T15:57:23.6993753Z       '  id\n' +
+2025-08-12T15:57:23.6993930Z       '  title\n' +
+2025-08-12T15:57:23.6994238Z       '  body\n' +
+2025-08-12T15:57:23.6994413Z       '  url\n' +
+2025-08-12T15:57:23.6994589Z       '  number\n' +
+2025-08-12T15:57:23.6994773Z       '  createdAt\n' +
+2025-08-12T15:57:23.6994960Z       '  updatedAt\n' +
+2025-08-12T15:57:23.6995150Z       '  closedAt\n' +
+2025-08-12T15:57:23.6995340Z       '  comments {\n' +
+2025-08-12T15:57:23.6995540Z       '    totalCount\n' +
+2025-08-12T15:57:23.6995734Z       '  }\n' +
+2025-08-12T15:57:23.6995903Z       '  state\n' +
+2025-08-12T15:57:23.6996080Z       '  author {\n' +
+2025-08-12T15:57:23.6996260Z       '    login\n' +
+2025-08-12T15:57:23.6996438Z       '    url\n' +
+2025-08-12T15:57:23.6996614Z       '    avatarUrl\n' +
+2025-08-12T15:57:23.6996806Z       '    __typename\n' +
+2025-08-12T15:57:23.6996997Z       '  }\n' +
+2025-08-12T15:57:23.6997194Z       '  authorAssociation\n' +
+2025-08-12T15:57:23.6997436Z       '  activeLockReason\n' +
+2025-08-12T15:57:23.6997676Z       '  labels(first: 40) {\n' +
+2025-08-12T15:57:23.6997895Z       '    nodes {\n' +
+2025-08-12T15:57:23.6998080Z       '      id\n' +
+2025-08-12T15:57:23.6998256Z       '      url\n' +
+2025-08-12T15:57:23.6998435Z       '      name\n' +
+2025-08-12T15:57:23.6998616Z       '      color\n' +
+2025-08-12T15:57:23.6998976Z       '      description\n' +
+2025-08-12T15:57:23.6999200Z       '      isDefault\n' +
+2025-08-12T15:57:23.6999393Z       '    }\n' +
+2025-08-12T15:57:23.6999564Z       '  }\n' +
+2025-08-12T15:57:23.6999863Z       '  milestone {\n' +
+2025-08-12T15:57:23.7000144Z       '    url\n' +
+2025-08-12T15:57:23.7000408Z       '    id\n' +
+2025-08-12T15:57:23.7000697Z       '    number\n' +
+2025-08-12T15:57:23.7000912Z       '    state\n' +
+2025-08-12T15:57:23.7001092Z       '    title\n' +
+2025-08-12T15:57:23.7001279Z       '    description\n' +
+2025-08-12T15:57:23.7001486Z       '    creator {\n' +
+2025-08-12T15:57:23.7001676Z       '      login\n' +
+2025-08-12T15:57:23.7001860Z       '      url\n' +
+2025-08-12T15:57:23.7002042Z       '      avatarUrl\n' +
+2025-08-12T15:57:23.7002242Z       '    }\n' +
+2025-08-12T15:57:23.7002419Z       '    createdAt\n' +
+2025-08-12T15:57:23.7002616Z       '    closedAt\n' +
+2025-08-12T15:57:23.7002807Z       '    updatedAt\n' +
+2025-08-12T15:57:23.7003013Z       '  }\n' +
+2025-08-12T15:57:23.7003189Z       '  locked\n' +
+2025-08-12T15:57:23.7003375Z       '\n' +
+2025-08-12T15:57:23.7003575Z       '                mergeable\n' +
+2025-08-12T15:57:23.7003837Z       '                changedFiles\n' +
+2025-08-12T15:57:23.7004095Z       '                mergedAt\n' +
+2025-08-12T15:57:23.7004341Z       '                isDraft\n' +
+2025-08-12T15:57:23.7004590Z       '                mergedBy {\n' +
+2025-08-12T15:57:23.7004840Z       '                  login\n' +
+2025-08-12T15:57:23.7005081Z       '                  avatarUrl\n' +
+2025-08-12T15:57:23.7005325Z       '                  url\n' +
+2025-08-12T15:57:23.7005542Z       '                }\n' +
+2025-08-12T15:57:23.7005774Z       '                commits {\n' +
+2025-08-12T15:57:23.7006031Z       '                  totalCount\n' +
+2025-08-12T15:57:23.7006266Z       '                }\n' +
+2025-08-12T15:57:23.7006470Z       '              }\n' +
+2025-08-12T15:57:23.7006664Z       '            }\n' +
+2025-08-12T15:57:23.7006854Z       '      }\n' +
+2025-08-12T15:57:23.7007027Z       '    }\n' +
+2025-08-12T15:57:23.7007199Z       '  ',
+2025-08-12T15:57:23.7007461Z     variables: { owner: 'mi-examples', repo: 'pp-dev-js' }
+2025-08-12T15:57:23.7007741Z   },
+2025-08-12T15:57:23.7007906Z   headers: {
+2025-08-12T15:57:23.7008126Z     'access-control-allow-origin': '*',
+2025-08-12T15:57:23.7009636Z     'access-control-expose-headers': 'ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset',
+2025-08-12T15:57:23.7010821Z     'content-encoding': 'gzip',
+2025-08-12T15:57:23.7011121Z     'content-security-policy': "default-src 'none'",
+2025-08-12T15:57:23.7011620Z     'content-type': 'application/json; charset=utf-8',
+2025-08-12T15:57:23.7011930Z     date: 'Tue, 12 Aug 2025 15:57:23 GMT',
+2025-08-12T15:57:23.7012350Z     'referrer-policy': 'origin-when-cross-origin, strict-origin-when-cross-origin',
+2025-08-12T15:57:23.7012744Z     server: 'github.com',
+2025-08-12T15:57:23.7013121Z     'strict-transport-security': 'max-age=31536000; includeSubdomains; preload',
+2025-08-12T15:57:23.7013507Z     'transfer-encoding': 'chunked',
+2025-08-12T15:57:23.7013816Z     vary: 'Accept-Encoding, Accept, X-Requested-With',
+2025-08-12T15:57:23.7014130Z     'x-content-type-options': 'nosniff',
+2025-08-12T15:57:23.7014396Z     'x-frame-options': 'deny',
+2025-08-12T15:57:23.7014717Z     'x-github-media-type': 'github.v3; format=json',
+2025-08-12T15:57:23.7015087Z     'x-github-request-id': '4C00:1B6FD9:AC544C:B02BF5:689B6463',
+2025-08-12T15:57:23.7015416Z     'x-ratelimit-limit': '5000',
+2025-08-12T15:57:23.7015677Z     'x-ratelimit-remaining': '5000',
+2025-08-12T15:57:23.7015947Z     'x-ratelimit-reset': '1755014624',
+2025-08-12T15:57:23.7016216Z     'x-ratelimit-resource': 'graphql',
+2025-08-12T15:57:23.7016459Z     'x-ratelimit-used': '55',
+2025-08-12T15:57:23.7016686Z     'x-xss-protection': '0'
+2025-08-12T15:57:23.7016889Z   },
+2025-08-12T15:57:23.7017049Z   response: {
+2025-08-12T15:57:23.7017278Z     data: { repository: { issue1830: null } },
+2025-08-12T15:57:23.7017696Z     errors: [
+2025-08-12T15:57:23.7017871Z       {
+2025-08-12T15:57:23.7018039Z         type: 'NOT_FOUND',
+2025-08-12T15:57:23.7018286Z         path: [ 'repository', 'issue1830' ],
+2025-08-12T15:57:23.7018567Z         locations: [ { line: 4, column: 9 } ],
+2025-08-12T15:57:23.7019200Z         message: 'Could not resolve to an issue or pull request with the number of 1830.',
+2025-08-12T15:57:23.7019661Z         pluginName: '[Function: semantic-release-monorepo]'
+2025-08-12T15:57:23.7019944Z       }
+2025-08-12T15:57:23.7020101Z     ]
+2025-08-12T15:57:23.7020267Z   }
+2025-08-12T15:57:23.7020425Z }
+2025-08-12T15:57:23.7020513Z 
+2025-08-12T15:57:23.7020597Z Node.js v20.19.4
+2025-08-12T15:57:23.7162604Z ##[error]Process completed with exit code 1.
+2025-08-12T15:57:23.7259352Z Post job cleanup.
+2025-08-12T15:57:23.8188101Z [command]/usr/bin/git version
+2025-08-12T15:57:23.8224307Z git version 2.50.1
+2025-08-12T15:57:23.8260327Z Copying '/home/runner/.gitconfig' to '/home/runner/work/_temp/52e55832-b91a-4892-9795-cb765c257c2a/.gitconfig'
+2025-08-12T15:57:23.8269616Z Temporarily overriding HOME='/home/runner/work/_temp/52e55832-b91a-4892-9795-cb765c257c2a' before making global git config changes
+2025-08-12T15:57:23.8270559Z Adding repository directory to the temporary git global config as a safe directory
+2025-08-12T15:57:23.8281454Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/pp-dev-js/pp-dev-js
+2025-08-12T15:57:23.8315284Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-08-12T15:57:23.8346546Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-08-12T15:57:23.8570735Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-08-12T15:57:23.8590986Z http.https://github.com/.extraheader
+2025-08-12T15:57:23.8604203Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-08-12T15:57:23.8634462Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-08-12T15:57:23.8959247Z Cleaning up orphan processes

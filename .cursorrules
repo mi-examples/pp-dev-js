@@ -54,14 +54,10 @@ feat(api): change response format structure
 
 BREAKING CHANGE: API now returns data in different structure.
 All existing clients must be updated to handle new format.
-
-Closes #123
-Fixes #456
 ```
 
 ### Body and Footer Guidelines:
 - **Body**: Explain WHAT and WHY, not HOW
-- **Footer**: Reference issues with "Closes #123" or "Fixes #456"
 - **Breaking Changes**: Start footer with "BREAKING CHANGE: <description>"
 
 ### Important Notes:
