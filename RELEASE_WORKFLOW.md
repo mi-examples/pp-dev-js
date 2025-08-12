@@ -1,151 +1,136 @@
-# Release Workflow Guide
+# Release Workflow Documentation
 
-This repository uses semantic-release for automated versioning and releases. Since direct pushes to the main branch are not allowed, releases are handled through Pull Requests.
+## Overview
 
-## How It Works
+This document describes the release workflows for the pp-dev-js monorepo, including both beta releases and production releases.
 
-### 1. Development Workflow
+## Workflow Types
 
-1. **Create a feature branch** from `main` or `develop`
-2. **Make your changes** following conventional commit format
-3. **Push to your branch** and create a Pull Request
-4. **Merge the PR** to trigger the release process
+### 1. Beta Release Workflow (`.github/workflows/beta-release.yml`)
 
-### 2. Branch Strategy
+**Trigger:** Push to `develop` branch
 
-- **`main`**: Production releases (stable versions)
-- **`develop`**: Beta releases (pre-release versions)
-- **Feature branches**: Development work
+**Purpose:** Creates beta releases for packages that have changes
 
-### 3. Commit Message Format
+**Execution Order:**
+1. **`pp-dev`** - Released first (core package)
+2. **`create-pp-dev`** - Released second (depends on pp-dev)
 
-Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+**Key Features:**
+- **Dependency-based execution** - `create-pp-dev` waits for `pp-dev` to complete
+- **Automatic package detection** - Only packages with changes are processed
+- **Tag verification** - Ensures dependencies exist before proceeding
+- **Commit comments** - Provides feedback on successful releases
+
+### 2. Production Release Workflow (`.github/workflows/publish.yml`)
+
+**Trigger:** Push of version tags (`v*` or `*@*`)
+
+**Purpose:** Publishes packages to npm registry
+
+**Execution Order:**
+1. **`pp-dev`** - Published first (core package)
+2. **`create-pp-dev`** - Published second (depends on pp-dev)
+
+**Key Features:**
+- **Dependency-based execution** - `create-pp-dev` waits for `pp-dev` to complete
+- **Tag-based triggering** - Automatically detects which package to publish
+- **Publication verification** - Confirms packages are available on npm
+- **Environment protection** - Uses Release environment for security
+
+## Problem Solved
+
+### Previous Issue: "Behind Remote" Error
+
+The original workflow used a matrix strategy that could run packages simultaneously, causing:
 
 ```
-type(scope): description
-
-[optional body]
-
-[optional footer(s)]
+The local branch develop is behind the remote one, therefore a new version won't be published.
 ```
 
-**Types that trigger releases:**
-- `feat`: New features (minor version bump)
-- `fix`: Bug fixes (patch version bump)
-- `BREAKING CHANGE`: Breaking changes (major version bump)
+**Root Cause:** When `create-pp-dev` created and pushed tags, `pp-dev` workflow (running in parallel) didn't have those tags, making it appear "behind" the remote.
 
-**Types that don't trigger releases:**
-- `docs`: Documentation changes
-- `style`: Code style changes
-- `refactor`: Code refactoring
-- `test`: Adding tests
-- `chore`: Maintenance tasks
+### Solution: Explicit Job Dependencies
 
-**Examples:**
-```bash
-git commit -m "feat: add new authentication system"
-git commit -m "fix: resolve memory leak in data processing"
-git commit -m "feat!: change API response format
+**New Approach:**
+- **Separate jobs** for each package instead of matrix
+- **Explicit dependencies** using `needs:` keyword
+- **Sequential execution** - `pp-dev` always runs first
+- **Tag verification** - Ensures dependencies exist before proceeding
 
-BREAKING CHANGE: The API now returns data in a different structure"
+## Workflow Structure
+
+### Beta Release Flow
+
+```
+detect-packages → beta-release-pp-dev → beta-release-create-pp-dev
 ```
 
-## Release Process
+### Production Release Flow
 
-### Automatic Release on PR Merge
-
-When a PR is merged to `main`:
-1. The `release-pr.yml` workflow detects changed packages
-2. Runs semantic-release for each changed package
-3. Creates a new GitHub release with changelog
-4. Comments on the PR with release information
-
-### Beta Releases
-
-When changes are pushed to `develop`:
-1. The `beta-release.yml` workflow creates beta versions
-2. Beta versions are tagged with `beta` channel
-3. No npm publishing (only GitHub releases)
-
-### Manual Publishing
-
-To publish to npm, create a tag:
-```bash
-git tag v1.2.3
-git push origin v1.2.3
+```
+detect-packages → publish-pp-dev → publish-create-pp-dev
 ```
 
-This triggers the `publish.yml` workflow to publish to npm.
+## Benefits
 
-## Configuration Files
+✅ **No more race conditions** - Clear execution order  
+✅ **Dependency safety** - `create-pp-dev` always has latest `pp-dev`  
+✅ **Reliable releases** - Consistent, predictable behavior  
+✅ **Easy debugging** - Clear job separation and dependencies  
+✅ **Scalable** - Easy to add more packages with dependencies  
 
-### `.releaserc.json`
+## Configuration
 
-Located in each package directory, configures semantic-release behavior:
-- Branch configuration (main + develop)
-- Plugin setup (commit analyzer, changelog, git, GitHub)
-- Monorepo support
+### Environment Variables Required
 
-### GitHub Workflows
+- `GITHUB_TOKEN` - GitHub API access
+- `NPM_TOKEN` - npm registry authentication
+- `NODE_AUTH_TOKEN` - npm authentication (alias for NPM_TOKEN)
 
-- **`release-pr.yml`**: Handles releases when PRs are merged to main
-- **`beta-release.yml`**: Creates beta releases on develop branch
-- **`publish.yml`**: Publishes packages to npm from tags
+### Permissions
 
-## Package.json Scripts
+- `contents: write` - Create tags and releases
+- `id-token: write` - GitHub App authentication
+- `pull-requests: write` - Create commit comments
 
-Each package has these scripts:
-```json
-{
-  "scripts": {
-    "release": "semantic-release",
-    "version": "npm version --commit-hooks false --git-tag-version false"
-  }
-}
+## Adding New Packages
+
+To add a new package to the release workflow:
+
+1. **Add new job** in the workflow file
+2. **Set dependencies** using `needs:` array
+3. **Configure working directory** for the package
+4. **Add dependency verification** if needed
+
+### Example
+
+```yaml
+publish-new-package:
+  needs: [detect-packages, publish-pp-dev]
+  if: ${{ contains(fromJSON(needs.detect-packages.outputs.packages), 'new-package') }}
+  # ... rest of configuration
 ```
 
 ## Troubleshooting
 
-### Release Not Triggering
+### Common Issues
 
-1. **Check commit messages**: Ensure they follow conventional commit format
-2. **Verify branch**: PR must be merged to `main` or pushed to `develop`
-3. **Check workflow logs**: Look for errors in GitHub Actions
+1. **"pp-dev tag not found"** - Ensure `pp-dev` job completed successfully
+2. **Build failures** - Check package build configuration
+3. **Permission errors** - Verify workflow permissions and secrets
 
-### Version Bumping Issues
+### Debug Steps
 
-1. **No changes detected**: Ensure files in the package directory were modified
-2. **Wrong version type**: Check commit message type (feat/fix/BREAKING CHANGE)
-3. **Monorepo issues**: Verify `semantic-release-monorepo` is properly configured
-
-### GitHub Actions Failures
-
-1. **Permissions**: Ensure workflows have proper permissions
-2. **Secrets**: Verify `GITHUB_TOKEN` and `npm_token` are set
-3. **Environment**: Check if Release environment exists and is configured
+1. Check workflow run logs for specific job failures
+2. Verify package detection logic is working
+3. Confirm all required secrets are configured
+4. Check package.json and build scripts
 
 ## Best Practices
 
-1. **Always use conventional commits** for meaningful version bumps
-2. **Test in develop branch** before merging to main
-3. **Review changelog** before releasing
-4. **Use semantic versioning** appropriately
-5. **Keep PRs focused** on single features/fixes
-
-## Manual Release
-
-If you need to manually trigger a release:
-
-1. Go to GitHub Actions
-2. Select the appropriate workflow
-3. Click "Run workflow"
-4. Choose the package (or leave empty for all)
-5. Click "Run workflow"
-
-## Support
-
-For issues with the release process:
-1. Check GitHub Actions logs
-2. Review semantic-release documentation
-3. Verify configuration files
-4. Check commit message format
+1. **Always test** workflow changes on feature branches first
+2. **Monitor releases** to ensure proper execution order
+3. **Keep dependencies** minimal and well-defined
+4. **Use semantic versioning** for consistent releases
+5. **Document changes** when modifying workflow logic
