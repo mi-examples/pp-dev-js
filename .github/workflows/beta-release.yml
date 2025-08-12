@@ -19,6 +19,9 @@ jobs:
       - name: Get changed packages
         id: set-packages
         run: |
+          # Set error handling to continue on errors
+          set +e
+          
           # Get files changed in the last commit
           # Handle case where there might be only one commit
           if git rev-parse HEAD~1 >/dev/null 2>&1; then
@@ -82,6 +85,9 @@ jobs:
           fi
           
           echo "Final packages output: $packages"
+          
+          # Reset error handling
+          set -e
 
   # Release pp-dev first (core package)
   beta-release-pp-dev:
