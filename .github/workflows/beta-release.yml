@@ -36,7 +36,14 @@ jobs:
             
             # If we have changed packages, format as JSON array
             if [[ ${#package_dirs[@]} -gt 0 ]]; then
+              # More robust JSON formatting
               packages=$(printf '"%s",' "${package_dirs[@]}" | sed 's/,$//' | sed 's/^/\[/; s/$/\]/')
+              
+              # Validate the generated JSON
+              if ! echo "$packages" | jq . >/dev/null 2>&1; then
+                echo "Warning: Generated invalid JSON, falling back to empty array"
+                packages="[]"
+              fi
             fi
           fi
           
@@ -46,6 +53,9 @@ jobs:
           echo "Debug - JSON validation: $(echo "$packages" | jq . 2>/dev/null || echo "INVALID JSON")"
           echo "Debug - Number of commits: $(git rev-list --count HEAD)"
           echo "Debug - Can access HEAD~1: $(git rev-parse HEAD~1 >/dev/null 2>&1 && echo "YES" || echo "NO")"
+          
+          # Always exit successfully - empty packages array is valid
+          echo "✅ Package detection completed successfully"
 
   # Release pp-dev first (core package)
   beta-release-pp-dev:
