@@ -20,7 +20,13 @@ jobs:
         id: set-packages
         run: |
           # Get files changed in the last commit
-          changed_files=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
+          # Handle case where there might be only one commit
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            changed_files=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
+          else
+            # If only one commit exists, get all files in the repository
+            changed_files=$(git ls-files 2>/dev/null || echo "")
+          fi
           
           packages="[]"
           
@@ -38,6 +44,8 @@ jobs:
           echo "Changed packages: $packages"
           echo "Debug - packages output format: '$packages'"
           echo "Debug - JSON validation: $(echo "$packages" | jq . 2>/dev/null || echo "INVALID JSON")"
+          echo "Debug - Number of commits: $(git rev-list --count HEAD)"
+          echo "Debug - Can access HEAD~1: $(git rev-parse HEAD~1 >/dev/null 2>&1 && echo "YES" || echo "NO")"
 
   # Release pp-dev first (core package)
   beta-release-pp-dev:
