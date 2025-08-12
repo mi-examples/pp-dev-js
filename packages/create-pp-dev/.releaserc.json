@@ -7,7 +7,7 @@
       "channel": "beta"
     }
   ],
-  "tagFormat": "v${version}",
+  "tagFormat": "create-pp-dev@${version}",
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -30,12 +30,12 @@
       {
         "assets": ["package.json", "package-lock.json", "CHANGELOG.md"],
         "releasedLabels": ["released"],
-        "failTitle": false,
         "successComment": "🎉 This PR has been released as version <%= nextRelease.version %>",
+        "failTitle": false,
         "failComment": "❌ This PR could not be released. Please check the logs for more details."
       }
     ]
   ],
   "extends": ["semantic-release-monorepo"],
   "preset": "angular"
-} 
+}
