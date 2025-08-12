@@ -170,6 +170,48 @@ jobs:
           fi
           echo "pp-dev dependency verified successfully"
 
+      - name: Update pp-dev dependency to latest version
+        run: |
+          echo "Updating pp-dev dependency to latest stable version..."
+          
+          # Get the latest stable pp-dev version from git tags (excluding beta versions)
+          latest_pp_dev_version=$(git tag --list "v*" | grep -v "beta\|alpha\|rc\|pre" | sort -V | tail -n1 | sed 's/^v//')
+          echo "Latest stable pp-dev version: $latest_pp_dev_version"
+          
+          if [[ -z "$latest_pp_dev_version" ]]; then
+            echo "Error: Could not determine latest stable pp-dev version"
+            exit 1
+          fi
+          
+          # Update package.json dependency
+          npm pkg set "dependencies.@metricinsights/pp-dev" "^$latest_pp_dev_version"
+          
+          # Update template package.json files
+          find . -name "package.json" -path "*/template-*/*" -exec sed -i "s/\"@metricinsights\/pp-dev\": \"[^\"]*\"/\"@metricinsights\/pp-dev\": \"^$latest_pp_dev_version\"/g" {} \;
+          
+          # Update any other version references in template files
+          find . -path "*/template-*/*" -type f -name "*.json" -exec sed -i "s/\"@metricinsights\/pp-dev\": \"[^\"]*\"/\"@metricinsights\/pp-dev\": \"^$latest_pp_dev_version\"/g" {} \;
+          
+          echo "Updated pp-dev dependency to stable version ^$latest_pp_dev_version"
+          
+          # Show the changes
+          echo "Updated package.json:"
+          grep "@metricinsights/pp-dev" package.json
+          
+          echo "Updated template files:"
+          find . -path "*/template-*/*" -name "package.json" -exec grep -l "@metricinsights/pp-dev" {} \;
+
+      - name: Commit dependency updates
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "Committing dependency updates..."
+            git add .
+            git commit -m "chore(deps): update pp-dev dependency to latest version"
+            git push origin HEAD:develop
+          else
+            echo "No dependency updates to commit"
+          fi
+
       - name: Beta Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
