@@ -119,7 +119,7 @@ jobs:
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                issue_number: context.pullRequest.number,
                 body: `🎉 **Release Successful!**\n\nPackage \`${{ matrix.package }}\` has been released as version \`${latestRelease.tag_name}\`\n\n**Release Notes:**\n${latestRelease.body || 'No release notes available'}\n\n**Download:** [${latestRelease.tag_name}](${latestRelease.html_url})`
               });
             }
