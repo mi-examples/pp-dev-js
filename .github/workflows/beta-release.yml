@@ -30,12 +30,14 @@ jobs:
             
             # If we have changed packages, format as JSON array
             if [[ ${#package_dirs[@]} -gt 0 ]]; then
-              packages=$(printf '"%s",' "${package_dirs[@]}" | sed 's/,$//' | awk '{print "["$0"]"}')
+              packages=$(printf '"%s",' "${package_dirs[@]}" | sed 's/,$//' | sed 's/^/\[/; s/$/\]/')
             fi
           fi
           
           echo "packages=$packages" >> $GITHUB_OUTPUT
           echo "Changed packages: $packages"
+          echo "Debug - packages output format: '$packages'"
+          echo "Debug - JSON validation: $(echo "$packages" | jq . 2>/dev/null || echo "INVALID JSON")"
 
   # Release pp-dev first (core package)
   beta-release-pp-dev:
