@@ -58,18 +58,40 @@ The local branch develop is behind the remote one, therefore a new version won't
 - **Sequential execution** - `pp-dev` always runs first
 - **Tag verification** - Ensures dependencies exist before proceeding
 
+### Additional Issue: Dependency Version Synchronization
+
+**Problem:** `create-pp-dev` package.json and templates often reference outdated `pp-dev` versions.
+
+**Solution:** Automatic dependency updates before release:
+- **Detects latest pp-dev version** from git tags
+- **Updates package.json dependency** to latest version
+- **Updates template files** to reference latest version
+- **Commits changes** before proceeding with release
+
 ## Workflow Structure
 
 ### Beta Release Flow
 
 ```
 detect-packages → beta-release-pp-dev → beta-release-create-pp-dev
+                                    ↓
+                              Update dependencies
+                                    ↓
+                              Commit changes
+                                    ↓
+                              Create release
 ```
 
 ### Production Release Flow
 
 ```
 detect-packages → publish-pp-dev → publish-create-pp-dev
+                              ↓
+                        Update dependencies
+                              ↓
+                        Commit changes
+                              ↓
+                        Publish to npm
 ```
 
 ## Benefits
