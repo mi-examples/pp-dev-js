@@ -32,10 +32,14 @@ jobs:
           
           if [[ -n "$changed_files" ]]; then
             # Extract unique package names from changed files
-            package_dirs=($(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u | grep -v '^$'))
+            # Use a more robust approach that handles empty output gracefully
+            package_dirs=()
+            if echo "$changed_files" | grep -q "packages/"; then
+              package_dirs=($(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u | grep -v '^$' || echo ""))
+            fi
             
             # If we have changed packages, format as JSON array
-            if [[ ${#package_dirs[@]} -gt 0 ]]; then
+            if [[ ${#package_dirs[@]} -gt 0 && -n "${package_dirs[0]}" ]]; then
               # More robust JSON formatting
               packages=$(printf '"%s",' "${package_dirs[@]}" | sed 's/,$//' | sed 's/^/\[/; s/$/\]/')
               
@@ -53,9 +57,31 @@ jobs:
           echo "Debug - JSON validation: $(echo "$packages" | jq . 2>/dev/null || echo "INVALID JSON")"
           echo "Debug - Number of commits: $(git rev-list --count HEAD)"
           echo "Debug - Can access HEAD~1: $(git rev-parse HEAD~1 >/dev/null 2>&1 && echo "YES" || echo "NO")"
+          echo "Debug - Changed files: $changed_files"
           
           # Always exit successfully - empty packages array is valid
           echo "✅ Package detection completed successfully"
+          
+          # Final validation - ensure we always have valid output
+          if [[ -z "$packages" ]]; then
+            packages="[]"
+            echo "packages=$packages" >> $GITHUB_OUTPUT
+            echo "Fallback: Set packages to empty array"
+          fi
+          
+          # Final JSON validation
+          if ! echo "$packages" | jq . >/dev/null 2>&1; then
+            echo "Final fallback: Invalid JSON detected, using empty array"
+            packages="[]"
+            echo "packages=$packages" >> $GITHUB_OUTPUT
+          fi
+          
+          # Ensure we have a valid packages output even if jq fails
+          if ! echo "$packages" | jq . >/dev/null 2>&1; then
+            echo "Warning: jq validation failed, but continuing with current output"
+          fi
+          
+          echo "Final packages output: $packages"
 
   # Release pp-dev first (core package)
   beta-release-pp-dev:
