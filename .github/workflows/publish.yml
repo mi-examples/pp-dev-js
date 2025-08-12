@@ -70,22 +70,19 @@ jobs:
             exit 1
           fi
 
-  publish:
+  # Publish pp-dev first (core package)
+  publish-pp-dev:
     needs: detect-packages
-    if: ${{ needs.detect-packages.outputs.packages != '[]' }}
+    if: ${{ contains(fromJSON(needs.detect-packages.outputs.packages), 'pp-dev') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
       pull-requests: write
     environment: Release
-    strategy:
-      fail-fast: false
-      matrix:
-        package: ${{ fromJSON(needs.detect-packages.outputs.packages) }}
     defaults:
       run:
-        working-directory: packages/${{ matrix.package }}
+        working-directory: packages/pp-dev
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -119,6 +116,92 @@ jobs:
           fi
           
           echo "Build verification passed"
+
+      - name: Publish Package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
+          NPM_TOKEN: ${{ secrets.npm_token }}
+        run: |
+          echo "Publishing package from tag: $GITHUB_REF_NAME"
+          npm publish --access public
+
+      - name: Verify publication
+        run: |
+          # Get package name from package.json
+          pkg_name=$(node -p "require('./package.json').name")
+          pkg_version=$(node -p "require('./package.json').version")
+          
+          echo "Verifying publication of $pkg_name@$pkg_version"
+          
+          # Wait a moment for npm registry to update
+          sleep 10
+          
+          # Check if package is available on npm
+          if npm view "$pkg_name@$pkg_version" version >/dev/null 2>&1; then
+            echo "✅ Successfully published $pkg_name@$pkg_version"
+          else
+            echo "❌ Failed to verify publication of $pkg_name@$pkg_version"
+            exit 1
+          fi
+
+  # Publish create-pp-dev second (depends on pp-dev)
+  publish-create-pp-dev:
+    needs: [detect-packages, publish-pp-dev]
+    if: ${{ contains(fromJSON(needs.detect-packages.outputs.packages), 'create-pp-dev') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+    environment: Release
+    defaults:
+      run:
+        working-directory: packages/create-pp-dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          # Check if dist directory exists and has content
+          if [[ ! -d "dist" ]]; then
+            echo "Error: Build output directory 'dist' not found"
+            exit 1
+          fi
+          
+          # Check if package.json exists in dist (for most packages)
+          if [[ -f "package.json" ]] && [[ ! -f "dist/package.json" ]]; then
+            echo "Warning: No package.json found in dist directory"
+          fi
+          
+          echo "Build verification passed"
+
+      - name: Verify pp-dev dependency
+        run: |
+          echo "Verifying pp-dev release exists..."
+          git fetch --tags origin
+          
+          if ! git tag --list | grep -q "^v[0-9]"; then
+            echo "Error: pp-dev tag not found. Cannot proceed with create-pp-dev publish."
+            exit 1
+          fi
+          echo "pp-dev dependency verified successfully"
 
       - name: Publish Package
         env:
