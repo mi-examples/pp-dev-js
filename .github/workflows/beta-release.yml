@@ -23,23 +23,81 @@ jobs:
           set +e
           
           echo "Starting package detection..."
+          echo "Current branch: $(git branch --show-current)"
+          echo "Current commit: $(git rev-parse HEAD)"
           
           # Initialize with empty array
           packages="[]"
           
+          # Show what packages exist in the repository
+          if [[ -d "packages" ]]; then
+            echo "Available packages in repository:"
+            ls -la packages/
+          else
+            echo "No packages directory found"
+          fi
+          
           # Simple approach: check if packages directory has any changes
           if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            echo "Previous commit exists, checking for changes..."
+            # Show all changes for debugging
+            echo "All changes in this commit:"
+            git diff --name-only HEAD~1 HEAD || echo "No changes or error getting diff"
+            
             # Check if any files in packages directory changed
             package_changes=$(git diff --name-only HEAD~1 HEAD | grep "^packages/" || echo "")
+            echo "Package changes detected: $package_changes"
             
             if [[ -n "$package_changes" ]]; then
               # Extract package names from changed files
               package_names=$(echo "$package_changes" | cut -d'/' -f2 | sort -u | grep -v '^$' || echo "")
+              echo "Package names extracted: $package_names"
               
               if [[ -n "$package_names" ]]; then
-                # Convert to JSON array
-                packages=$(echo "$package_names" | tr '\n' ',' | sed 's/,$//' | sed 's/^/\["/; s/,/","/g; s/$/"/')
-                packages="[$packages]"
+                # Convert to JSON array using a simpler approach
+                packages="["
+                first=true
+                while IFS= read -r package; do
+                  if [[ -n "$package" ]]; then
+                    if [[ "$first" == "true" ]]; then
+                      packages+="\"$package\""
+                      first=false
+                    else
+                      packages+=",\"$package\""
+                    fi
+                  fi
+                done <<< "$package_names"
+                packages+="]"
+                
+                # Validate JSON
+                if ! echo "$packages" | jq . >/dev/null 2>&1; then
+                  echo "Warning: Invalid JSON generated, using empty array"
+                  packages="[]"
+                fi
+              fi
+            fi
+          else
+            # This is the first commit, check all packages
+            echo "First commit detected, checking all packages..."
+            if [[ -d "packages" ]]; then
+              package_names=$(find packages -maxdepth 1 -type d -name "*" | grep -v "^packages$" | sed 's|packages/||' | sort -u)
+              echo "All packages found: $package_names"
+              
+              if [[ -n "$package_names" ]]; then
+                # Convert to JSON array using a simpler approach
+                packages="["
+                first=true
+                while IFS= read -r package; do
+                  if [[ -n "$package" ]]; then
+                    if [[ "$first" == "true" ]]; then
+                      packages+="\"$package\""
+                      first=false
+                    else
+                      packages+=",\"$package\""
+                    fi
+                  fi
+                done <<< "$package_names"
+                packages+="]"
                 
                 # Validate JSON
                 if ! echo "$packages" | jq . >/dev/null 2>&1; then
