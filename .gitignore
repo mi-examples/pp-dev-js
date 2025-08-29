@@ -3,6 +3,7 @@ dist
 dist-zip
 node_modules
 *-pp-dev-*.*.*.tgz
+*-pp-dev-latest.tgz
 backups
 packages/create-pp-dev/template-*/package-lock.json
 .env
