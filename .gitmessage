@@ -4,35 +4,67 @@
 #
 # <footer>
 #
-# Types:
-#   feat:     A new feature
-#   fix:      A bug fix
-#   docs:     Documentation only changes
-#   style:    Changes that do not affect the meaning of the code (white-space, formatting, etc)
-#   refactor: A code change that neither fixes a bug nor adds a feature
-#   perf:     A code change that improves performance
-#   test:     Adding missing tests or correcting existing tests
-#   chore:    Changes to the build process or auxiliary tools and libraries
+# COMMIT TYPES (choose one):
+#   feat     A new feature (triggers MINOR version bump)
+#   fix      A bug fix (triggers PATCH version bump)
+#   docs     Documentation only changes (NO version bump)
+#   style    Code style changes, formatting, etc (NO version bump)
+#   refactor Code refactoring, no functional changes (NO version bump)
+#   perf     Performance improvements (NO version bump)
+#   test     Adding or updating tests (NO version bump)
+#   chore    Maintenance tasks, dependencies, etc (NO version bump)
+#   ci       CI/CD configuration changes (NO version bump)
+#   build    Build system or external dependency changes (NO version bump)
 #
-# Scopes:
-#   build:    Changes that affect the build system or external dependencies
-#   ci:       Changes to CI configuration files and scripts
-#   docs:     Documentation related changes
-#   test:     Test related changes
-#   release:  Release related changes
+# SCOPES (optional, but recommended):
+#   pp-dev           Changes to the pp-dev package
+#   create-pp-dev    Changes to the create-pp-dev package
+#   api              API-related changes
+#   auth             Authentication/authorization changes
+#   ui               User interface changes
+#   build            Build system changes
+#   ci               CI/CD changes
+#   deps             Dependency updates
+#   docs             Documentation changes
+#   test             Testing changes
+#   utils            Utility functions
+#   config           Configuration changes
 #
-# Examples:
-#   feat(api): add new endpoint for user registration
-#   fix(auth): handle invalid token error
+# SUBJECT:
+#   - Use imperative mood ("add" not "added")
+#   - Don't capitalize first letter
+#   - No period at the end
+#   - Keep it concise (50 chars or less)
+#
+# BODY:
+#   - Explain WHAT and WHY, not HOW
+#   - Use imperative mood
+#   - Wrap at 72 characters
+#
+# FOOTER:
+#   - Breaking changes: "BREAKING CHANGE: <description>"
+#
+# EXAMPLES:
+#   feat(pp-dev): add new authentication middleware
+#   fix(api): resolve memory leak in data processing
 #   docs(readme): update installation instructions
-#   style: format code according to prettier
-#   refactor(utils): extract common functions
-#   perf(render): optimize image loading
-#   test(e2e): add login test suite
-#   chore(deps): update dependencies
+#   style: format code according to prettier rules
+#   refactor(utils): extract common validation functions
+#   perf(render): optimize image loading performance
+#   test(e2e): add comprehensive login test suite
+#   chore(deps): update all dependencies to latest versions
+#   ci(github): add semantic-release workflow
+#   build(rollup): optimize bundle size
 #
-# Breaking changes should be indicated by starting the footer with BREAKING CHANGE:
-# Example:
-#   feat(api): add new endpoint for user registration
+# BREAKING CHANGES:
+#   feat(api): change response format structure
 #
-#   BREAKING CHANGE: The user registration endpoint now requires additional fields 
+#   BREAKING CHANGE: API now returns data in different structure.
+#   All existing clients must be updated to handle new format.
+#
+
+#
+# TIPS:
+#   - Only feat, fix, and BREAKING CHANGE trigger version bumps
+#   - Use scopes to indicate which package/area is affected
+#   - Be descriptive but concise 

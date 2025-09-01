@@ -2,8 +2,6 @@ name: Publish Package
 
 on:
   push:
-    branches:
-      - main
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
       - "*@*" # Push events to matching any package tag, i.e. create-pp-dev@1.0.0
@@ -24,7 +22,7 @@ jobs:
       packages: ${{ steps.set-packages.outputs.packages }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -32,24 +30,22 @@ jobs:
         id: set-packages
         run: |
           packages="[]" # Default to empty array
+          
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.package }}" ]]; then
             # For manual trigger with specified package
-            packages="[\"${{ github.event.inputs.package }}\"]"
+            if [[ -d "packages/${{ github.event.inputs.package }}" ]]; then
+              packages="[\"${{ github.event.inputs.package }}\"]"
+            else
+              echo "Error: Package '${{ github.event.inputs.package }}' not found in packages directory"
+              exit 1
+            fi
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             # For manual trigger without specified package, use all packages
-            all_packages=($(ls -d packages/* | cut -d'/' -f2))
-            if [[ ${#all_packages[@]} -gt 0 ]]; then
-              packages=$(printf '"%s",' "${all_packages[@]}" | sed 's/,$//' | awk '{print "["$0"]"}')
-            fi
-          elif [[ $GITHUB_REF_NAME == "main" ]]; then
-            # For main branch, find changed packages
-            git fetch --prune || true
-            changed_files=$(git diff --name-only HEAD~1 HEAD)
-            # Extract unique package names
-            package_dirs=($(echo "$changed_files" | grep -o 'packages/[^/]*' | cut -d'/' -f2 | sort -u))
-            # If we have changed packages, format as JSON array
-            if [[ ${#package_dirs[@]} -gt 0 ]]; then
-              packages=$(printf '"%s",' "${package_dirs[@]}" | sed 's/,$//' | awk '{print "["$0"]"}')
+            if [[ -d "packages" ]]; then
+              all_packages=($(ls -d packages/*/ 2>/dev/null | cut -d'/' -f2 | grep -v '^$'))
+              if [[ ${#all_packages[@]} -gt 0 ]]; then
+                packages=$(printf '"%s",' "${all_packages[@]}" | sed 's/,$//' | sed 's/^/\[/; s/$/\]/')
+              fi
             fi
           else
             # For tags, determine package name based on tag format
@@ -58,56 +54,226 @@ jobs:
             else
               # Extract package name from tags like package-name@version
               pkg_name=${GITHUB_REF_NAME%@*}
-              # If pkg_name is not empty, format as JSON array
-              if [[ -n "$pkg_name" ]]; then
+              # If pkg_name is not empty and package exists, format as JSON array
+              if [[ -n "$pkg_name" && -d "packages/$pkg_name" ]]; then
                   packages="[\"$pkg_name\"]" # JSON array for specific package tag
               fi
             fi
           fi
+          
           echo "packages=$packages" >> $GITHUB_OUTPUT
           echo "Generated packages output: $packages"
+          echo "Debug - packages output format: '$packages'"
+          echo "Debug - JSON validation: $(echo "$packages" | jq . 2>/dev/null || echo "INVALID JSON")"
+          
+          # Validate JSON output
+          if ! echo "$packages" | jq . >/dev/null 2>&1; then
+            echo "Error: Invalid JSON generated for packages"
+            exit 1
+          fi
+          
+          # Always exit successfully - packages array is valid
+          echo "✅ Package detection completed successfully"
 
-  publish:
+  # Publish pp-dev first (core package)
+  publish-pp-dev:
     needs: detect-packages
-    if: ${{ needs.detect-packages.outputs.packages != '[]' }}
+    if: ${{ contains(fromJSON(needs.detect-packages.outputs.packages), 'pp-dev') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
       pull-requests: write
     environment: Release
-    strategy:
-      fail-fast: false
-      matrix:
-        package: ${{ fromJSON(needs.detect-packages.outputs.packages) }}
     defaults:
       run:
-        working-directory: packages/${{ matrix.package }}
+        working-directory: packages/pp-dev
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup node
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
+          cache: 'npm'
 
-      - name: Install deps and build
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify build output
         run: |
-          npm install
-          npm run build
+          # Check if dist directory exists and has content
+          if [[ ! -d "dist" ]]; then
+            echo "Error: Build output directory 'dist' not found"
+            exit 1
+          fi
+          
+          # Check if package.json exists in dist (for most packages)
+          if [[ -f "package.json" ]] && [[ ! -f "dist/package.json" ]]; then
+            echo "Warning: No package.json found in dist directory"
+          fi
+          
+          echo "Build verification passed"
 
-      - name: Release and Publish
+      - name: Publish Package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
           NPM_TOKEN: ${{ secrets.npm_token }}
         run: |
-          if [[ $GITHUB_REF_NAME == "main" ]]; then
-            npm run release
+          echo "Publishing package from tag: $GITHUB_REF_NAME"
+          npm publish --access public
+
+      - name: Verify publication
+        run: |
+          # Get package name from package.json
+          pkg_name=$(node -p "require('./package.json').name")
+          pkg_version=$(node -p "require('./package.json').version")
+          
+          echo "Verifying publication of $pkg_name@$pkg_version"
+          
+          # Wait a moment for npm registry to update
+          sleep 10
+          
+          # Check if package is available on npm
+          if npm view "$pkg_name@$pkg_version" version >/dev/null 2>&1; then
+            echo "✅ Successfully published $pkg_name@$pkg_version"
           else
-            npm publish --access public
+            echo "❌ Failed to verify publication of $pkg_name@$pkg_version"
+            exit 1
+          fi
+
+  # Publish create-pp-dev second (depends on pp-dev)
+  publish-create-pp-dev:
+    needs: [detect-packages, publish-pp-dev]
+    if: ${{ contains(fromJSON(needs.detect-packages.outputs.packages), 'create-pp-dev') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+    environment: Release
+    defaults:
+      run:
+        working-directory: packages/create-pp-dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          # Check if dist directory exists and has content
+          if [[ ! -d "dist" ]]; then
+            echo "Error: Build output directory 'dist' not found"
+            exit 1
+          fi
+          
+          # Check if package.json exists in dist (for most packages)
+          if [[ -f "package.json" ]] && [[ ! -f "dist/package.json" ]]; then
+            echo "Warning: No package.json found in dist directory"
+          fi
+          
+          echo "Build verification passed"
+
+      - name: Verify pp-dev dependency
+        run: |
+          echo "Verifying pp-dev release exists..."
+          git fetch --tags origin
+          
+          if ! git tag --list | grep -q "^v[0-9]"; then
+            echo "Error: pp-dev tag not found. Cannot proceed with create-pp-dev publish."
+            exit 1
+          fi
+          echo "pp-dev dependency verified successfully"
+
+      - name: Update pp-dev dependency to latest version
+        run: |
+          echo "Updating pp-dev dependency to latest stable version..."
+          
+          # Get the latest stable pp-dev version from git tags (excluding beta versions)
+          latest_pp_dev_version=$(git tag --list "v*" | grep -v "beta\|alpha\|rc\|pre" | sort -V | tail -n1 | sed 's/^v//')
+          echo "Latest stable pp-dev version: $latest_pp_dev_version"
+          
+          if [[ -z "$latest_pp_dev_version" ]]; then
+            echo "Error: Could not determine latest stable pp-dev version"
+            exit 1
+          fi
+          
+          # Update package.json dependency
+          npm pkg set "dependencies.@metricinsights/pp-dev" "^$latest_pp_dev_version"
+          
+          # Update template package.json files
+          find . -name "package.json" -path "*/template-*/*" -exec sed -i "s/\"@metricinsights\/pp-dev\": \"[^\"]*\"/\"@metricinsights\/pp-dev\": \"^$latest_pp_dev_version\"/g" {} \;
+          
+          # Update any other version references in template files
+          find . -path "*/template-*/*" -type f -name "*.json" -exec sed -i "s/\"@metricinsights\/pp-dev\": \"[^\"]*\"/\"@metricinsights\/pp-dev\": \"^$latest_pp_dev_version\"/g" {} \;
+          
+          echo "Updated pp-dev dependency to stable version ^$latest_pp_dev_version"
+          
+          # Show the changes
+          echo "Updated package.json:"
+          grep "@metricinsights/pp-dev" package.json
+          
+          echo "Updated template files:"
+          find . -path "*/template-*/*" -name "package.json" -exec grep -l "@metricinsights/pp-dev" {} \;
+
+      - name: Commit dependency updates
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "Committing dependency updates..."
+            git add .
+            git commit -m "chore(deps): update pp-dev dependency to latest version"
+            git push origin HEAD:develop
+          else
+            echo "No dependency updates to commit"
+          fi
+
+      - name: Publish Package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
+          NPM_TOKEN: ${{ secrets.npm_token }}
+        run: |
+          echo "Publishing package from tag: $GITHUB_REF_NAME"
+          npm publish --access public
+
+      - name: Verify publication
+        run: |
+          # Get package name from package.json
+          pkg_name=$(node -p "require('./package.json').name")
+          pkg_version=$(node -p "require('./package.json').version")
+          
+          echo "Verifying publication of $pkg_name@$pkg_version"
+          
+          # Wait a moment for npm registry to update
+          sleep 10
+          
+          # Check if package is available on npm
+          if npm view "$pkg_name@$pkg_version" version >/dev/null 2>&1; then
+            echo "✅ Successfully published $pkg_name@$pkg_version"
+          else
+            echo "❌ Failed to verify publication of $pkg_name@$pkg_version"
+            exit 1
           fi
