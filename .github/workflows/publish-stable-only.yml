@@ -21,6 +21,11 @@ on:
         required: false
         type: boolean
         default: false
+      dry_run:
+        description: 'Run in dry-run mode (no actual publishing)'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   validate-version:
@@ -248,10 +253,28 @@ jobs:
             exit 1
           fi
           
-          # Publish with 'latest' tag (default for stable versions)
-          npm publish --access public --tag latest
+          # Check if dry-run mode is enabled
+          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+            echo "🔍 DRY-RUN MODE: Simulating package publication..."
+            npm publish --access public --tag latest --dry-run
+            echo "✅ Dry-run completed successfully - no actual publication occurred"
+          else
+            # Publish with 'latest' tag (default for stable versions)
+            npm publish --access public --tag latest
+          fi
+
+      - name: Dry-run mode indicator
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "🔍 DRY-RUN MODE ENABLED"
+          echo "=========================================="
+          echo "✅ Package would have been published to npm"
+          echo "✅ All validation steps completed successfully"
+          echo "✅ No actual publication occurred"
+          echo "=========================================="
 
       - name: Verify publication
+        if: github.event.inputs.dry_run != 'true'
         run: |
           # Get package name from package.json
           pkg_name=$(node -p "require('./package.json').name")
@@ -422,10 +445,28 @@ jobs:
             exit 1
           fi
           
-          # Publish with 'latest' tag (default for stable versions)
-          npm publish --access public --tag latest
+          # Check if dry-run mode is enabled
+          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+            echo "🔍 DRY-RUN MODE: Simulating package publication..."
+            npm publish --access public --tag latest --dry-run
+            echo "✅ Dry-run completed successfully - no actual publication occurred"
+          else
+            # Publish with 'latest' tag (default for stable versions)
+            npm publish --access public --tag latest
+          fi
+
+      - name: Dry-run mode indicator
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "🔍 DRY-RUN MODE ENABLED"
+          echo "=========================================="
+          echo "✅ Package would have been published to npm"
+          echo "✅ All validation steps completed successfully"
+          echo "✅ No actual publication occurred"
+          echo "=========================================="
 
       - name: Verify publication
+        if: github.event.inputs.dry_run != 'true'
         run: |
           # Get package name from package.json
           pkg_name=$(node -p "require('./package.json').name")
