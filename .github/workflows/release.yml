@@ -1,0 +1,237 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'                    # v1.0.0, v1.0.0-demo, etc.
+      - 'create-pp-dev@*'      # create-pp-dev@0.5.0, create-pp-dev@0.5.0-beta, etc.
+
+env:
+  NPM_ORG: '@metricinsights'
+
+jobs:
+  analyze-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      package: ${{ steps.analyze.outputs.package }}
+      version: ${{ steps.analyze.outputs.version }}
+      is_stable: ${{ steps.analyze.outputs.is_stable }}
+      should_publish: ${{ steps.analyze.outputs.should_publish }}
+    steps:
+      - name: Analyze tag
+        id: analyze
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          echo "Analyzing tag: $TAG_NAME"
+
+          # Check if it's a v* tag (pp-dev)
+          if [[ $TAG_NAME =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(.*)$ ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+            SUFFIX="${BASH_REMATCH[2]}"
+            PACKAGE="pp-dev"
+
+            echo "package=$PACKAGE" >> $GITHUB_OUTPUT
+            echo "version=$VERSION$SUFFIX" >> $GITHUB_OUTPUT
+
+            if [[ -z "$SUFFIX" ]]; then
+              echo "is_stable=true" >> $GITHUB_OUTPUT
+              echo "should_publish=true" >> $GITHUB_OUTPUT
+              echo "Stable pp-dev version: $VERSION"
+            else
+              echo "is_stable=false" >> $GITHUB_OUTPUT
+              echo "should_publish=false" >> $GITHUB_OUTPUT
+              echo "ℹPre-release pp-dev version: $VERSION$SUFFIX (will create release only)"
+            fi
+
+          # Check if it's a create-pp-dev@* tag
+          elif [[ $TAG_NAME =~ ^create-pp-dev@([0-9]+\.[0-9]+\.[0-9]+)(.*)$ ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+            SUFFIX="${BASH_REMATCH[2]}"
+            PACKAGE="create-pp-dev"
+
+            echo "package=$PACKAGE" >> $GITHUB_OUTPUT
+            echo "version=$VERSION$SUFFIX" >> $GITHUB_OUTPUT
+
+            if [[ -z "$SUFFIX" ]]; then
+              echo "is_stable=true" >> $GITHUB_OUTPUT
+              echo "should_publish=true" >> $GITHUB_OUTPUT
+              echo "Stable create-pp-dev version: $VERSION"
+            else
+              echo "is_stable=false" >> $GITHUB_OUTPUT
+              echo "should_publish=false" >> $GITHUB_OUTPUT
+              echo "ℹPre-release create-pp-dev version: $VERSION$SUFFIX (will create release only)"
+            fi
+
+          else
+            echo "Unrecognized tag format: $TAG_NAME"
+            echo "Expected: v1.0.0, v1.0.0-demo, create-pp-dev@0.5.0, create-pp-dev@0.5.0-beta"
+            exit 1
+          fi
+
+  publish-package:
+    needs: analyze-tag
+    if: needs.analyze-tag.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: packages/${{ needs.analyze-tag.outputs.package }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          if [[ "${{ needs.analyze-tag.outputs.package }}" == "create-pp-dev" ]]; then
+            echo "Installing dependencies for create-pp-dev (using npm install)"
+            npm install
+          else
+            echo "Installing dependencies for pp-dev (using npm ci)"
+            npm ci
+          fi
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify build
+        run: |
+          if [[ ! -d "dist" ]]; then
+            echo "Build failed: dist directory not found"
+            exit 1
+          fi
+          echo "Build verification passed"
+
+      - name: Update package version
+        run: |
+          echo "Updating package version to ${{ needs.analyze-tag.outputs.version }}"
+          npm version ${{ needs.analyze-tag.outputs.version }} --no-git-tag-version
+          echo "Package version updated"
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
+        run: |
+          echo "🚀 Publishing ${{ needs.analyze-tag.outputs.package }}@${{ needs.analyze-tag.outputs.version }}"
+          npm publish --access public
+
+  create-release:
+    needs: analyze-tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Release Notes
+        id: release-notes
+        run: |
+          PACKAGE="${{ needs.analyze-tag.outputs.package }}"
+          TAG_NAME="${{ github.ref_name }}"
+
+          echo "Generating release notes for $PACKAGE..."
+
+          # Get commits that affected this package directory since last tag of the same type
+          if [[ "$PACKAGE" == "pp-dev" ]]; then
+            # Find last pp-dev tag (only v* tags, exclude current tag)
+            LAST_TAG=$(git tag --list "v*" | sort -V | grep -v "^$TAG_NAME$" | tail -n1 || echo "")
+            echo "Looking for commits in packages/pp-dev since last pp-dev tag: $LAST_TAG"
+            if [[ -n "$LAST_TAG" ]]; then
+              COMMITS=$(git log --oneline ${LAST_TAG}..HEAD -- packages/pp-dev | head -10 || echo "")
+            else
+              echo "No previous pp-dev tag found, getting all commits in packages/pp-dev"
+              COMMITS=$(git log --oneline --since="1 month ago" -- packages/pp-dev | head -10 || echo "")
+            fi
+          else
+            # Find last create-pp-dev tag (only create-pp-dev@* tags, exclude current tag)
+            LAST_TAG=$(git tag --list "create-pp-dev@*" | sort -V | grep -v "^$TAG_NAME$" | tail -n1 || echo "")
+            echo "Looking for commits in packages/create-pp-dev since last create-pp-dev tag: $LAST_TAG"
+            if [[ -n "$LAST_TAG" ]]; then
+              COMMITS=$(git log --oneline ${LAST_TAG}..HEAD -- packages/create-pp-dev | head -10 || echo "")
+            else
+              echo "No previous create-pp-dev tag found, getting all commits in packages/create-pp-dev"
+              COMMITS=$(git log --oneline --since="1 month ago" -- packages/create-pp-dev | head -10 || echo "")
+            fi
+          fi
+
+          if [[ -n "$COMMITS" ]]; then
+            echo "Found commits for $PACKAGE:"
+            echo "$COMMITS"
+
+            # Format commits for release notes
+            RELEASE_NOTES=""
+            while IFS= read -r commit; do
+              if [[ -n "$commit" ]]; then
+                # Extract commit hash and message
+                HASH=$(echo "$commit" | cut -d' ' -f1)
+                MESSAGE=$(echo "$commit" | cut -d' ' -f2-)
+
+                # Format as GitHub release note
+                RELEASE_NOTES+="- $MESSAGE"$'\n'
+              fi
+            done <<< "$COMMITS"
+
+            echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+            echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "No specific commits found for $PACKAGE"
+            echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+            echo "No specific changes for this package" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const package = '${{ needs.analyze-tag.outputs.package }}';
+            const version = '${{ needs.analyze-tag.outputs.version }}';
+            const isStable = '${{ needs.analyze-tag.outputs.is_stable }}' === 'true';
+            const tagName = context.ref.replace('refs/tags/', '');
+            const releaseNotes = `${{ steps.release-notes.outputs.RELEASE_NOTES }}`;
+
+            let releaseTitle;
+            let releaseBody;
+
+            const npmOrg = '${{ env.NPM_ORG }}';
+
+            if (package === 'pp-dev') {
+              releaseTitle = `v${version}`;
+              releaseBody = `## 🚀 v${version}
+
+              ### 📝 Changes
+              ${releaseNotes}
+              `;
+            } else {
+              releaseTitle = `create-pp-dev@${version}`;
+              releaseBody = `## 🚀 create-pp-dev@${version}
+
+              ### 📝 Changes
+              ${releaseNotes}
+              `;
+            }
+
+            const release = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tagName,
+              name: releaseTitle,
+              body: releaseBody,
+              draft: false,
+              prerelease: !isStable
+            });
+
+            console.log(`Created release: ${release.data.html_url}`);
