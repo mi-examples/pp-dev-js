@@ -1,0 +1,155 @@
+---
+description: "Guidelines for split commits in packages directory for semantic-release compatibility"
+globs: "packages/**/*"
+---
+
+# Packages Split Commits Rule
+
+## Overview
+This rule ensures proper commit structure for the packages directory to maintain semantic-release compatibility in a monorepo setup.
+
+## Critical Requirements
+
+### 1. **Separate Commits Per Package**
+When making changes that affect multiple packages, create separate commits for each package:
+
+```bash
+# ❌ WRONG - Single commit affecting multiple packages
+git commit -m "feat: add new feature to both pp-dev and create-pp-dev"
+
+# ✅ CORRECT - Separate commits per package
+git commit -m "feat(pp-dev): add new authentication middleware"
+git commit -m "feat(create-pp-dev): update templates with new auth feature"
+```
+
+### 2. **Package-Specific Commit Messages**
+Use the package name as the scope in commit messages:
+
+```bash
+# ✅ CORRECT examples
+feat(pp-dev): add new CLI command
+fix(create-pp-dev): resolve template generation issue
+docs(pp-dev): update API documentation
+chore(create-pp-dev): update dependencies
+```
+
+### 3. **File Path Considerations**
+When committing changes, be specific about which package is affected:
+
+```bash
+# For pp-dev changes
+git add packages/pp-dev/
+git commit -m "feat(pp-dev): your message"
+
+# For create-pp-dev changes
+git add packages/create-pp-dev/
+git commit -m "feat(create-pp-dev): your message"
+
+# For template changes
+git add packages/create-pp-dev/template-*/
+git commit -m "feat(create-pp-dev): update template configurations"
+```
+
+## Why This Matters
+
+### Semantic Release Monorepo Behavior
+- **semantic-release-monorepo** analyzes commits per package
+- Each package gets its own version bump based on its specific commits
+- Mixed commits can cause incorrect version calculations
+- Package-specific commits ensure accurate changelog generation
+
+### Version Bump Logic
+- `feat(pp-dev):` → triggers MINOR version bump for pp-dev
+- `fix(create-pp-dev):` → triggers PATCH version bump for create-pp-dev
+- Mixed commits may cause unexpected version bumps
+
+## Package Structure
+
+### Current Packages
+- **pp-dev**: Core development tool (`packages/pp-dev/`)
+- **create-pp-dev**: Template generator (`packages/create-pp-dev/`)
+
+### Template Dependencies
+When updating template files, ensure the parent package is also updated:
+```bash
+# Update template files
+git add packages/create-pp-dev/template-*/
+git commit -m "feat(create-pp-dev): update template dependencies"
+
+# Update main package.json if needed
+git add packages/create-pp-dev/package.json
+git commit -m "chore(create-pp-dev): update pp-dev dependency version"
+```
+
+## Commit Message Format
+
+### Required Format
+```
+<type>(<package>): <subject>
+```
+
+### Valid Types
+- `feat` - New features (MINOR version bump)
+- `fix` - Bug fixes (PATCH version bump)
+- `docs` - Documentation changes (NO version bump)
+- `style` - Code style changes (NO version bump)
+- `refactor` - Code refactoring (NO version bump)
+- `perf` - Performance improvements (NO version bump)
+- `test` - Adding/updating tests (NO version bump)
+- `chore` - Maintenance tasks (NO version bump)
+- `ci` - CI/CD changes (NO version bump)
+- `build` - Build system changes (NO version bump)
+
+### Valid Package Scopes
+- `pp-dev` - Changes to the pp-dev package
+- `create-pp-dev` - Changes to the create-pp-dev package
+
+## Examples
+
+### ✅ Good Examples
+```bash
+feat(pp-dev): add new authentication middleware
+fix(pp-dev): resolve memory leak in data processing
+docs(pp-dev): update installation instructions
+chore(create-pp-dev): update all template dependencies
+feat(create-pp-dev): add new Next.js template variant
+```
+
+### ❌ Bad Examples
+```bash
+feat: add new feature to both packages
+fix: resolve issues in pp-dev and create-pp-dev
+chore: update dependencies
+feat(pp-dev,create-pp-dev): add new feature
+```
+
+## Workflow Integration
+
+### Release Process
+1. Make package-specific commits
+2. Push to appropriate branch (main for stable, develop for beta)
+3. semantic-release-monorepo analyzes each package independently
+4. Each package gets versioned based on its own commit history
+5. GitHub Actions workflow publishes packages separately
+
+### Branch Strategy
+- **main**: Stable releases (v1.0.0, v1.1.0, etc.)
+- **develop**: Beta releases (v1.1.0-beta.1, v1.1.0-beta.2, etc.)
+
+## Enforcement
+
+### Pre-commit Hooks
+Consider adding pre-commit hooks to enforce this rule:
+```bash
+# Check if commit affects multiple packages
+if git diff --cached --name-only | grep -E '^packages/' | cut -d'/' -f2 | sort -u | wc -l | grep -v '^1$'; then
+  echo "Error: Commit affects multiple packages. Please split into separate commits."
+  exit 1
+fi
+```
+
+### Code Review Checklist
+- [ ] Each commit affects only one package
+- [ ] Commit message includes correct package scope
+- [ ] No mixed changes across packages in single commit
+- [ ] Template changes are committed with create-pp-dev scope
