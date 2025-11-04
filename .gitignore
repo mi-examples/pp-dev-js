@@ -9,3 +9,9 @@ packages/create-pp-dev/template-*/package-lock.json
 .env
 !.env.example
 .pp-dev-meta/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
