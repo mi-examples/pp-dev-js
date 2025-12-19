@@ -1,0 +1,462 @@
+name: Develop Build
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  NPM_ORG: '@metricinsights'
+
+jobs:
+  build-pp-dev:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    defaults:
+      run:
+        working-directory: packages/pp-dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Check for changes in pp-dev
+        id: check-changes
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+          
+          echo "Checking changes between $BEFORE and $AFTER in packages/pp-dev"
+          
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Initial commit, assuming changes"
+            exit 0
+          fi
+          
+          CHANGED_FILES=$(git diff --name-status $BEFORE $AFTER -- packages/pp-dev 2>/dev/null || true)
+          COMMITS_WITH_CHANGES=$(git log --oneline $BEFORE..$AFTER -- packages/pp-dev 2>/dev/null | wc -l || echo "0")
+          
+          LAST_COMMIT_FILES=$(git show --name-only --format= $AFTER 2>/dev/null | grep "^packages/pp-dev/" || true)
+          
+          echo "Files changed (diff):"
+          echo "$CHANGED_FILES"
+          echo "Commits with changes: $COMMITS_WITH_CHANGES"
+          echo "Files in last commit (packages/pp-dev/):"
+          echo "$LAST_COMMIT_FILES"
+          
+          if [ -z "$CHANGED_FILES" ] && [ "$COMMITS_WITH_CHANGES" = "0" ] && [ -z "$LAST_COMMIT_FILES" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in packages/pp-dev"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in packages/pp-dev"
+            if [ -n "$CHANGED_FILES" ]; then
+              git diff --stat $BEFORE $AFTER -- packages/pp-dev || true
+            fi
+          fi
+
+      - name: Setup Node.js
+        if: steps.check-changes.outputs.has_changes == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: packages/pp-dev/package-lock.json
+
+      - name: Install dependencies
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: npm ci
+
+      - name: Build pp-dev
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: npm run build
+
+      - name: Configure git user
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync branch with remote
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git fetch origin develop
+          git fetch --all || true
+          git branch --set-upstream-to=origin/develop develop || true
+          git reset --hard origin/develop || true
+
+      - name: Verify branches exist
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          echo "Remote branches:"
+          git branch -r
+          echo "Local branches:"
+          git branch
+          echo "Checking if develop exists on remote:"
+          git ls-remote --heads origin develop || echo "develop branch not found on remote"
+
+      - name: Clean up git notes
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git fetch origin refs/notes/*:refs/notes/* || true
+          git notes prune || true
+          git config core.notesRef refs/notes/commits || true
+
+      - name: Run semantic-release
+        if: steps.check-changes.outputs.has_changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.npm_token }}
+        run: |
+          echo "Running semantic-release for develop branch"
+          echo "Current branch: $(git branch --show-current)"
+          echo "Last commits:"
+          git log --oneline -5
+          npm run release
+
+  build-create-pp-dev:
+    needs: build-pp-dev
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    defaults:
+      run:
+        working-directory: packages/create-pp-dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Check for changes in create-pp-dev
+        id: check-changes
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+          
+          echo "Checking changes between $BEFORE and $AFTER in packages/create-pp-dev"
+          
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Initial commit, assuming changes"
+            exit 0
+          fi
+          
+          CHANGED_FILES=$(git diff --name-status $BEFORE $AFTER -- packages/create-pp-dev 2>/dev/null || true)
+          COMMITS_WITH_CHANGES=$(git log --oneline $BEFORE..$AFTER -- packages/create-pp-dev 2>/dev/null | wc -l || echo "0")
+          
+          LAST_COMMIT_FILES=$(git show --name-only --format= $AFTER 2>/dev/null | grep "^packages/create-pp-dev/" || true)
+          
+          echo "Files changed (diff):"
+          echo "$CHANGED_FILES"
+          echo "Commits with changes: $COMMITS_WITH_CHANGES"
+          echo "Files in last commit (packages/create-pp-dev/):"
+          echo "$LAST_COMMIT_FILES"
+          
+          if [ -z "$CHANGED_FILES" ] && [ "$COMMITS_WITH_CHANGES" = "0" ] && [ -z "$LAST_COMMIT_FILES" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in packages/create-pp-dev"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in packages/create-pp-dev"
+            if [ -n "$CHANGED_FILES" ]; then
+              git diff --stat $BEFORE $AFTER -- packages/create-pp-dev || true
+            fi
+          fi
+
+      - name: Setup Node.js
+        if: steps.check-changes.outputs.has_changes == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Verify pp-dev dependency version before install
+        if: steps.check-changes.outputs.has_changes == 'true'
+        env:
+          NPM_ORG: ${{ env.NPM_ORG }}
+        run: |
+          echo "Verifying pp-dev dependency version exists in npm..."
+          current_version=$(grep -o "\"${NPM_ORG}/pp-dev\": \"[^\"]*\"" package.json | grep -o "\"[^\"]*\"" | tr -d '"' | cut -d'^' -f2 | cut -d'~' -f1 || echo "")
+          
+          if [[ -n "$current_version" ]]; then
+            echo "Current version in package.json: $current_version"
+            
+            # Check if version exists in npm
+            npm_check=$(npm view "${NPM_ORG}/pp-dev@$current_version" version 2>/dev/null || echo "")
+            
+            if [[ -z "$npm_check" ]]; then
+              echo "WARNING: Version $current_version not found in npm. Getting latest available version..."
+              latest_npm_version=$(npm view "${NPM_ORG}/pp-dev" version 2>/dev/null || echo "")
+              
+              if [[ -n "$latest_npm_version" ]]; then
+                echo "Updating to latest available npm version: $latest_npm_version"
+                sed -i "s/\"${NPM_ORG}\/pp-dev\": \"[^\"]*\"/\"${NPM_ORG}\/pp-dev\": \"^$latest_npm_version\"/g" package.json
+                
+                # Update template files
+                find . -name "package.json" -path "*/template-*/*" -exec sed -i "s/\"${NPM_ORG}\/pp-dev\": \"[^\"]*\"/\"${NPM_ORG}\/pp-dev\": \"^$latest_npm_version\"/g" {} \;
+                find . -path "*/template-*/*" -type f -name "*.json" -exec sed -i "s/\"${NPM_ORG}\/pp-dev\": \"[^\"]*\"/\"${NPM_ORG}\/pp-dev\": \"^$latest_npm_version\"/g" {} \;
+                
+                echo "Updated to version ^$latest_npm_version"
+              else
+                echo "ERROR: No version found in npm. Cannot proceed with npm install."
+                exit 1
+              fi
+            else
+              echo "Version $current_version verified in npm."
+            fi
+          else
+            echo "Could not determine current version from package.json"
+          fi
+
+      - name: Install dependencies
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: npm install
+
+      - name: Build create-pp-dev
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: npm run build
+
+      - name: Verify build output
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          if [[ ! -d "dist" ]]; then
+            echo "Error: Build output directory 'dist' not found"
+            exit 1
+          fi
+          echo "Build verification passed"
+
+      - name: Configure git user
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync branch with remote
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git fetch origin develop
+          git fetch --all || true
+          git branch --set-upstream-to=origin/develop develop || true
+          git reset --hard origin/develop || true
+
+      - name: Verify pp-dev dependency
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          echo "Verifying pp-dev release exists..."
+          git fetch --tags origin
+          
+          if ! git tag --list | grep -q "^develop-pp-dev@"; then
+            echo "Error: pp-dev tag not found. Cannot proceed with create-pp-dev release."
+            exit 1
+          fi
+          echo "pp-dev dependency verified successfully"
+
+      - name: Update pp-dev dependency to latest version
+        if: steps.check-changes.outputs.has_changes == 'true'
+        env:
+          NPM_ORG: ${{ env.NPM_ORG }}
+        run: |
+          echo "Updating pp-dev dependency to latest version available in npm..."
+          
+          # First, try to get the latest version from npm (this is the source of truth)
+          latest_npm_version=$(npm view "${NPM_ORG}/pp-dev" version 2>/dev/null || echo "")
+          
+          if [[ -n "$latest_npm_version" ]]; then
+            echo "Latest version available in npm: $latest_npm_version"
+            version_to_use="$latest_npm_version"
+          else
+            echo "Warning: No version found in npm. Checking GitHub releases..."
+            
+            # Get the latest stable pp-dev version from git tags (GitHub releases, excluding beta versions)
+            latest_pp_dev_version=$(git tag --list "develop-pp-dev@*" | grep -v "beta\|alpha\|rc\|pre" | sort -V | tail -n1 | sed 's/^develop-pp-dev@//')
+            
+            if [[ -n "$latest_pp_dev_version" ]]; then
+              echo "Found version $latest_pp_dev_version in GitHub releases, checking if it exists in npm..."
+              
+              # Check if this version exists in npm
+              npm_version_check=$(npm view "${NPM_ORG}/pp-dev@$latest_pp_dev_version" version 2>/dev/null || echo "")
+              
+              if [[ -n "$npm_version_check" ]]; then
+                echo "Version $latest_pp_dev_version found in npm, using it..."
+                version_to_use="$latest_pp_dev_version"
+              else
+                echo "Version $latest_pp_dev_version from GitHub releases not found in npm."
+                echo "Keeping current dependency version - cannot update to non-existent npm version."
+                echo "Current package.json version:"
+                grep "${NPM_ORG}/pp-dev" package.json || true
+                exit 0
+              fi
+            else
+              echo "Error: Could not determine version from GitHub releases or npm"
+              echo "Keeping current dependency version."
+              grep "${NPM_ORG}/pp-dev" package.json || true
+              exit 0
+            fi
+          fi
+          
+          # Verify version exists in npm before updating
+          echo "Verifying version $version_to_use exists in npm..."
+          verify_version=$(npm view "${NPM_ORG}/pp-dev@$version_to_use" version 2>/dev/null || echo "")
+          
+          if [[ -z "$verify_version" ]]; then
+            echo "ERROR: Version $version_to_use does not exist in npm. Aborting update."
+            echo "Current package.json version:"
+            grep "${NPM_ORG}/pp-dev" package.json || true
+            exit 1
+          fi
+          
+          echo "Version $version_to_use verified in npm. Updating dependency..."
+          
+          # Update package.json dependency
+          sed -i "s/\"${NPM_ORG}\/pp-dev\": \"[^\"]*\"/\"${NPM_ORG}\/pp-dev\": \"^$version_to_use\"/g" package.json
+          
+          # Update template package.json files
+          find . -name "package.json" -path "*/template-*/*" -exec sed -i "s/\"${NPM_ORG}\/pp-dev\": \"[^\"]*\"/\"${NPM_ORG}\/pp-dev\": \"^$version_to_use\"/g" {} \;
+          
+          # Update any other version references in template files
+          find . -path "*/template-*/*" -type f -name "*.json" -exec sed -i "s/\"${NPM_ORG}\/pp-dev\": \"[^\"]*\"/\"${NPM_ORG}\/pp-dev\": \"^$version_to_use\"/g" {} \;
+          
+          echo "Updated pp-dev dependency to version ^$version_to_use"
+          
+          # Show the changes
+          echo "Updated package.json:"
+          grep "${NPM_ORG}/pp-dev" package.json
+          
+          echo "Updated template files:"
+          find . -path "*/template-*/*" -name "package.json" -exec grep -l "${NPM_ORG}/pp-dev" {} \;
+
+      - name: Commit dependency updates
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "Committing dependency updates..."
+            git add .
+            git commit -m "chore(deps): update pp-dev dependency to latest version"
+            git push origin HEAD:develop
+            
+            # Wait a bit for push to propagate
+            echo "Waiting for push to propagate..."
+            sleep 3
+          else
+            echo "No dependency updates to commit"
+          fi
+
+      - name: Sync branch after dependency update
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          echo "Syncing branch after dependency update..."
+          git fetch origin develop
+          git fetch --tags origin
+          git pull --rebase origin develop || git reset --hard origin/develop
+          echo "Branch synced after dependency update"
+
+      - name: Clean up git notes
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git fetch origin refs/notes/*:refs/notes/* || true
+          git notes prune || true
+          git config core.notesRef refs/notes/commits || true
+
+      - name: Sync branch before semantic-release
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          echo "Syncing branch before semantic-release..."
+          git fetch origin develop
+          git fetch --tags origin
+          
+          # Try to pull with rebase first, if it fails, reset hard
+          if ! git pull --rebase origin develop; then
+            echo "Rebase failed, resetting hard..."
+            git reset --hard origin/develop
+          fi
+          
+          git branch --set-upstream-to=origin/develop develop || true
+          
+          echo "Branch synced successfully"
+          echo "Current branch: $(git branch --show-current)"
+          echo "Current commit: $(git rev-parse HEAD)"
+          echo "Remote commit: $(git rev-parse origin/develop)"
+          echo "Last commits:"
+          git log --oneline -5
+          
+          # Verify we're not behind
+          if git rev-list HEAD..origin/develop | grep -q .; then
+            echo "WARNING: Still behind remote, forcing sync..."
+            git reset --hard origin/develop
+          fi
+
+      - name: Final sync before semantic-release
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          echo "Final sync before semantic-release..."
+          
+          # Fetch all branches and tags
+          git fetch --all --tags --prune
+          git fetch origin develop
+          git fetch --tags origin
+          
+          # Ensure we're on develop branch
+          git checkout develop || git checkout -b develop origin/develop
+          
+          # Force update local develop branch to match remote
+          git reset --hard origin/develop
+          git clean -fd
+          
+          # Get current and remote commit hashes
+          local_commit=$(git rev-parse HEAD)
+          remote_commit=$(git rev-parse origin/develop)
+          
+          echo "Local commit: $local_commit"
+          echo "Remote commit: $remote_commit"
+          
+          # Verify we're on the same commit
+          if [ "$local_commit" != "$remote_commit" ]; then
+            echo "ERROR: Commits still differ after sync!"
+            echo "Forcing hard reset..."
+            git fetch origin develop
+            git reset --hard origin/develop
+            git clean -fd
+            echo "After reset: $(git rev-parse HEAD)"
+          fi
+          
+          # Set upstream tracking
+          git branch --set-upstream-to=origin/develop develop || true
+          
+          # Verify one final time
+          git fetch origin develop
+          if git rev-list HEAD..origin/develop | grep -q .; then
+            echo "WARNING: Still behind after all sync attempts!"
+            git log --oneline HEAD..origin/develop || true
+            git reset --hard origin/develop
+          fi
+          
+          echo "Final commit: $(git rev-parse HEAD)"
+          echo "Remote commit: $(git rev-parse origin/develop)"
+          echo "Branch status:"
+          git status
+          echo "Last 5 commits:"
+          git log --oneline -5
+
+      - name: Run semantic-release
+        if: steps.check-changes.outputs.has_changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.npm_token }}
+        run: |
+          echo "Running semantic-release for develop branch"
+          echo "Current commit: $(git rev-parse HEAD)"
+          echo "Remote commit: $(git rev-parse origin/develop)"
+          npm run release
